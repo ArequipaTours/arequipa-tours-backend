@@ -71,8 +71,8 @@
                 <thead>
                     <tr>
                         <th class="fs-8 text-white" style="background-color: #f97316;">Bus</th>
-                        <th class="fs-8 text-white" style="background-color: #000000;">Destino</th>
                         <th class="fs-8 text-white" style="background-color: #000000;">Origen</th>
+                        <th class="fs-8 text-white" style="background-color: #000000;">Destino</th>
                         <th class="fs-8 text-white" style="background-color: #000000;">Hora</th>
                         <th class="fs-8 text-white" style="background-color: #000000;">Tipo Serv.</th>
                         <th class="text-black fs-8" style="background-color: #C6CFCE">Acciones</th>
@@ -83,8 +83,8 @@
                       {% for travel in travels_today %}
                         <tr>
                           <td>{{ travel.bus.placa }}</td>
-                          <td>{{ travel.destino }}</td>
                           <td>{{ travel.origen }}</td>
+                          <td>{{ travel.destino }}</td>
                           <td>{{ travel.hora }}</td>
                           <td>{{ travel.tipoServicioViaje|join(', ') }}</td>
                           <td>

@@ -1,0 +1,138 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Registrar Chofer/Relevo{% endblock %}
+
+{% block dashboard_header %}
+<div class="text-center mb-3">
+    <h2 class="main-title">Registrar Chofer/Relevo</h2>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  {% if error %}
+    <div class="alert alert-danger floating-message" role="alert">
+      {{ error }}
+    </div>
+  {% endif %}
+  {% if success %}
+    <div class="alert alert-success floating-message" role="alert">
+      {{ success }}
+    </div>
+  {% endif %}
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <form method="POST" action="{{ url_for('admin.register_driver') }}" id="driverForm">
+    <div class="row mb-4"> <!-- Ajustado mb-4 para más espacio -->
+      <div class="col-md-6">
+         <label for="nombre" class="form-label">Nombre:</label>
+         <input type="text" id="nombre" name="nombre" class="form-control" required pattern="[A-Za-z\s]+" title="Solo letras" placeholder="Ingrese el nombre">
+      </div>
+      <div class="col-md-6">
+         <label for="telefono" class="form-label">Teléfono:</label>
+         <input type="text" id="telefono" name="telefono" class="form-control" required pattern="\d+" title="Solo números" placeholder="Ingrese el teléfono">
+      </div>
+    </div>
+    <div class="row mb-4"> <!-- Ajustado mb-4 para más espacio -->
+      <div class="col-md-6">
+         <label for="CI" class="form-label">Carnet (CI):</label>
+         <input type="text" id="CI" name="CI" class="form-control" required pattern="\d+" title="Solo números" placeholder="Ingrese el CI">
+      </div>
+      <div class="col-md-6">
+         <div class="form-check">
+           <input class="form-check-input" type="checkbox" id="ciComplementCheck">
+           <label class="form-check-label" for="ciComplementCheck">
+             ¿Tiene complemento?
+           </label>
+         </div>
+         <div class="d-flex align-items-center">
+           <input type="text" id="ciComplement" name="ciComplement" class="form-control me-2" placeholder="Complemento" disabled pattern="[0-9]+-[A-Za-z]" title="Formato: número-letra">
+           <div class="d-flex flex-column">
+             <label for="ciDepartment" class="form-label" >Extensión:</label>
+             <select id="ciDepartment" name="ciDepartment" class="form-select" required>
+               <option value="" selected>Seleccionar</option>
+               <option value="CH">CH</option>
+               <option value="LP">LP</option>
+               <option value="CB">CB</option>
+               <option value="OR">OR</option>
+               <option value="PT">PT</option>
+               <option value="SC">SC</option>
+               <option value="TJ">TJ</option>
+               <option value="PA">PA</option>
+               <option value="BN">BN</option>
+             </select>
+           </div>
+         </div>
+      </div>
+    </div>
+    <div class="row mb-4"> <!-- Ajustado mb-4 para más espacio -->
+      <div class="col-md-6">
+         <label for="numero_licencia" class="form-label">Licencia:</label>
+         <!-- Se autocompleta con lo ingresado en CI -->
+         <input type="text" id="numero_licencia" name="numero_licencia" class="form-control" readonly>
+      </div>
+      <div class="col-md-6">
+         <label for="rol" class="form-label">Rol:</label>
+         <input type="text" id="rol" name="rol" class="form-control" value="Chofer - Relevo" readonly>
+      </div>
+    </div>
+    <div class="row mb-4"> <!-- Ajustado mb-4 para más espacio -->
+      <div class="col-md-6">
+         <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento:</label>
+         <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+         <label for="categoria_licencia" class="form-label">Categoría de Licencia:</label>
+         <input type="text" id="categoria_licencia" name="categoria_licencia" class="form-control" value="C" readonly>
+      </div>
+    </div>
+    <div class="row mb-4"> <!-- Ajustado mb-4 para más espacio -->
+      <div class="col-md-6">
+         <label for="fecha_emision_licencia" class="form-label">Fecha de Emisión de Licencia:</label>
+         <input type="date" id="fecha_emision_licencia" name="fecha_emision_licencia" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+         <label for="fecha_expiracion_licencia" class="form-label">Fecha de Expiración de Licencia:</label>
+         <input type="date" id="fecha_expiracion_licencia" name="fecha_expiracion_licencia" class="form-control" required>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-register-driver" style="margin-bottom: 40px;">Registrar</button> <!-- Ajustado margin-bottom a 40px -->
+  </form>
+
+
+  <!-- Overlay de carga -->
+  <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="spinner-border text-light" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="loading-text">Registrando...</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/driver_validations.js"></script>
+<script>
+  // Copia automáticamente el valor del campo CI al campo Licencia
+  document.getElementById('CI').addEventListener('input', function() {
+    document.getElementById('numero_licencia').value = this.value;
+  });
+  // Convertir automáticamente el nombre a mayúsculas
+  document.getElementById('nombre').addEventListener('input', function() {
+    this.value = this.value.toUpperCase();
+  });
+  // Habilitar/deshabilitar campo de complemento de CI
+  document.getElementById('ciComplementCheck').addEventListener('change', function() {
+    const ciComplement = document.getElementById('ciComplement');
+    ciComplement.disabled = !this.checked;
+  });
+  // Al enviar el formulario, muestra el overlay de carga
+  document.getElementById('driverForm').addEventListener('submit', function() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+  });
+  // Si se detecta un mensaje de éxito, almacénalo y redirige inmediatamente
+  if (document.querySelector('.alert-success')) {
+    localStorage.setItem('driverSuccess', document.querySelector('.alert-success').innerText);
+    window.location.href = "{{ url_for('admin.list_drivers') }}";
+  }
+</script>
+{% endblock %}

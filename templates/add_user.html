@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registrar Usuario</title>
+  <!-- Puedes enlazar tu hoja de estilos si lo deseas -->
+</head>
+<body>
+  <h2>Registrar Usuario (Administrador / Ventanilla)</h2>
+  
+  <!-- Mostrar mensajes de error o éxito -->
+  {% if error %}
+    <p style="color: red;">{{ error }}</p>
+  {% endif %}
+  {% if success %}
+    <p style="color: green;">{{ success }}</p>
+  {% endif %}
+  
+  <form method="POST" action="{{ url_for('admin.register_user') }}">
+    <label for="carnet">Carnet:</label>
+    <input type="text" id="carnet" name="carnet" required><br><br>
+    
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" name="nombre" required><br><br>
+    
+    <label for="password">Contraseña:</label>
+    <input type="password" id="password" name="password" required><br><br>
+    
+    <label for="rol">Rol:</label>
+    <select id="rol" name="rol" required>
+      <option value="administrador">Administrador</option>
+      <option value="ventanilla">Ventanilla</option>
+    </select><br><br>
+    
+    <button type="submit">Registrar Usuario</button>
+  </form>
+</body>
+</html>

@@ -1,0 +1,151 @@
+{% extends "base_admin.html" %}
+{% block title %}Ver Pasajes{% endblock %}
+
+{% block content %}
+<!-- Incluir la hoja de estilo para esta vista -->
+<link rel="stylesheet" href="/static/css/ver.css">
+
+<!-- Inyectar la variable global passengerMap para el JS -->
+<script>
+  var passengerMap = {{ passenger_map|tojson }};
+</script>
+
+<div class="container">
+  <h2>Ver Pasajes</h2>
+  <p>
+    <strong>
+      Origen: {{ viaje.origen }} &nbsp;&nbsp;
+      Destino: {{ viaje.destino }} &nbsp;&nbsp;<br>
+      Fecha: {{ viaje.fecha }} &nbsp;&nbsp;
+      Hora: {{ viaje.hora }}
+    </strong>
+  </p>
+</div>
+
+{# Separamos asientos extra de los normales #}
+{% set normal_seats = [] %}
+{% set extra_seats = [] %}
+{% for seat in viaje.bus.estructura_asientos %}
+  {% if seat.isExtra %}
+    {% set _ = extra_seats.append(seat) %}
+  {% else %}
+    {% set _ = normal_seats.append(seat) %}
+  {% endif %}
+{% endfor %}
+
+{# Agrupar los asientos normales por piso #}
+{% set floors_map = {} %}
+{% for s in normal_seats %}
+  {% set floor = s.floor %}
+  {% if floor not in floors_map %}
+    {% set _ = floors_map.update({floor: []}) %}
+  {% endif %}
+  {% set _ = floors_map[floor].append(s) %}
+{% endfor %}
+
+{# Ordenar los pisos en orden descendente #}
+{% set sorted_floors = floors_map.keys()|sort(reverse=true) %}
+
+<div class="layout-container">
+  <!-- Columna Izquierda: pisos en orden descendente -->
+  <div class="floors-column">
+    {% for floor_num in sorted_floors %}
+      <div class="bus-layout">
+        <div class="bus-floor">
+          <h3>Asientos Piso: {{ floor_num }}</h3>
+          <div class="seats">
+            <div class="contenedor-tabla">
+              <div class="texto-lateral izquierda">
+                <p class="texto-girado">Cola</p>
+              </div>
+              {% set seats_for_this_floor = floors_map[floor_num] %}
+              {% set max_row = seats_for_this_floor|map(attribute='row')|list|max %}
+              {% set max_col = seats_for_this_floor|map(attribute='col')|list|max %}
+              <table class="seat-map">
+                {% for r in range(max_row + 1) %}
+                  {% if r == 2 %}
+                    <tr class="aisle-row">
+                      <td colspan="{{ max_col + 1 }}" style="height:20px; border:none;"></td>
+                    </tr>
+                  {% endif %}
+                  <tr>
+                    {% for c in range(max_col + 1) %}
+                      {% set found = seats_for_this_floor
+                        | selectattr("row", "equalto", r)
+                        | selectattr("col", "equalto", c)
+                        | list %}
+                      {% if found|length > 0 %}
+                        {% set seat = found[0] %}
+                        {% if seat.status == "ocupado" %}
+                          <td class="seat occupied"
+                              data-seat-name="{{ seat.seatNumber }}"
+                              onclick="openPassengerModal('{{ seat.seatNumber }}')">
+                            {{ seat.seatNumber or "OCC" }}
+                          </td>
+                        {% else %}
+                          <td class="seat available" data-seat-name="{{ seat.seatNumber }}">
+                            {{ seat.seatNumber }}
+                          </td>
+                        {% endif %}
+                      {% else %}
+                        <td class="seat"></td>
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
+              </table>
+              <div class="texto-lateral derecha">
+                <p class="texto-girado">Cabeza</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Columna Derecha: todos los asientos extra -->
+  <div class="extras-column">
+    <h2>Asientos Extra</h2>
+    {% if extra_seats|length == 0 %}
+      <p>No hay asientos extra.</p>
+    {% else %}
+      <div class="extra-seats-container">
+        {% for seat in extra_seats %}
+          {% if seat.status == "ocupado" %}
+            <div class="seat extra occupied"
+                 data-seat-name="{{ seat.seatNumber }}"
+                 onclick="openPassengerModal('{{ seat.seatNumber }}')">
+              {{ seat.seatNumber }}
+            </div>
+          {% else %}
+            <div class="seat extra available" data-seat-name="{{ seat.seatNumber }}">
+              {{ seat.seatNumber }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Modal para mostrar los detalles del pasajero -->
+<div id="passengerModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close" onclick="closePassengerModal()">&times;</span>
+      <h2>Detalles del Pasajero</h2>
+    </div>
+    <div class="modal-body" id="passengerDetails">
+      <!-- Se llenará dinámicamente con JS -->
+    </div>
+    <div class="modal-footer">
+      <button onclick="closePassengerModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/ver_pasajes.js"></script>
+{% endblock %}

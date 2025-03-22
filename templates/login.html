@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Usamos la hoja de estilos exclusiva para el login -->
+  <link rel="stylesheet" href="/static/css/login.css">
+  <title>Arequipa Tours Login</title>
+</head>
+<body class="login-page">
+  <div class="login-container">
+    <h2>INICIO DE SESIÓN</h2>
+    <img src="/static/images/arequipa.png" alt="Arequipa Tours" width="100%">
+    
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    
+    <!-- Formulario para enviar los datos de login vía POST -->
+    <form method="POST" action="/login">
+      <label for="carnet">Carnet:</label>
+      <input type="text" id="carnet" name="carnet" placeholder="Ejemplo: 18228195" required>
+      
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" name="password" placeholder="Contraseña" required>
+      
+      <button type="submit">INGRESAR</button>
+    </form>
+    <!-- Ajustar el diseño al quitar el botón de registro -->
+    <div style="text-align: center; margin-top: 15px;">
+      <!-- Botón de registro eliminado -->
+    </div>
+  </div>
+  
+  <script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+      var carnetInput = document.querySelector('input[name="carnet"]');
+      var carnetValue = carnetInput.value;
+      if (!/^\d+$/.test(carnetValue)) {
+        var overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        overlay.style.zIndex = '999';
+        document.body.appendChild(overlay);
+
+        var modal = document.createElement('div');
+        modal.style.position = 'fixed';
+        modal.style.top = '50%';
+        modal.style.left = '50%';
+        modal.style.transform = 'translate(-50%, -50%)';
+        modal.style.backgroundColor = 'white';
+        modal.style.padding = '20px';
+        modal.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+        modal.style.opacity = '0';
+        modal.style.transition = 'opacity 0.5s ease';
+        modal.style.borderRadius = '5px';
+        modal.style.zIndex = '1000';
+        modal.innerHTML = '<p>El carnet solo debe contener números.</p><button id="closeModal" style="display: block; margin: 10px auto; background-color: #F77014; border: none; color: white;">Cerrar</button>';
+        document.body.appendChild(modal);
+
+        setTimeout(function() {
+          modal.style.opacity = '1';
+        }, 5);
+
+        document.getElementById('closeModal').addEventListener('click', function() {
+          modal.style.opacity = '0';
+          setTimeout(function() {
+            document.body.removeChild(modal);
+            document.body.removeChild(overlay);
+          }, 200);
+        });
+
+        event.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>

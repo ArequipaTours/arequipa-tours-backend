@@ -1,0 +1,133 @@
+{% extends "base_admin.html" %}
+
+{% block title %}
+  Editar Bus
+{% endblock %}
+
+{% block dashboard_header %}
+<div class="text-center mb-4">
+  <h2 class="main-title">
+    Editar Bus
+    <img src="/static/images/autobus.png" alt="icono bus" style="width:30px; height:30px;">
+  </h2>
+</div>
+{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('admin.edit_bus', bus_id=bus._id) }}" method="POST" id="editBusForm">
+  <div class="row g-3 mb-4 justify-content-center">
+    <!-- Placa (no editable, fondo gris) -->
+    <div class="col-md-2">
+      <label for="placa" class="form-label">Placa:</label>
+      <input type="text" id="placa" name="placa" class="form-control"
+             value="{{ bus.placa }}"
+             readonly style="background-color: #d3d3d3;">
+    </div>
+
+    <!-- Modelo -->
+    <div class="col-md-3">
+      <label for="modelo" class="form-label">Modelo:</label>
+      <input type="text" id="modelo" name="modelo" class="form-control"
+             value="{{ bus.modelo|default('') }}"
+             required>
+    </div>
+
+    <!-- Propietario -->
+    <div class="col-md-3">
+      <label for="propietario" class="form-label">Propietario:</label>
+      <input type="text" id="propietario" name="propietario" class="form-control"
+             value="{{ bus.propietario|default('') }}"
+             required>
+    </div>
+
+    <!-- Estado -->
+    <div class="col-md-3">
+      <label for="estado" class="form-label">Estado:</label>
+      <select id="estado" name="estado" class="form-select" required>
+        <option value="">Seleccione...</option>
+        <option value="disponible"
+          {% if bus.estado == "disponible" %}selected{% endif %}>Disponible</option>
+        <option value="en mantenimiento"
+          {% if bus.estado == "en mantenimiento" %}selected{% endif %}>En mantenimiento</option>
+        <option value="no operativo"
+          {% if bus.estado == "no operativo" %}selected{% endif %}>No operativo</option>
+      </select>
+    </div>
+    <!-- Se quita "Total de Pisos" y "Tipo de Servicio" -->
+  </div>
+
+  <!-- Botones de Guardar / Cancelar -->
+  <div class="text-center">
+    <button type="button" class="btn btn-success px-4 me-3" id="btnGuardarEdit">Guardar Cambios</button>
+    <button type="button" class="btn btn-danger px-4" id="btnCancelarEdit">Cancelar</button>
+  </div>
+</form>
+
+<!-- Overlay de carga -->
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+  <div class="spinner-border text-light" role="status">
+    <span class="visually-hidden">Cargando...</span>
+  </div>
+  <p class="loading-text">Procesando...</p>
+</div>
+
+<!-- Div para mensajes flotantes -->
+<div id="floatingMessage" class="floating-message" style="display: none;"></div>
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="/static/css/editar_bus.css">
+<script>
+  // Convertir el modelo a mayúsculas
+  document.getElementById('modelo').addEventListener('input', function() {
+    this.value = this.value.toUpperCase();
+  });
+  
+  const btnGuardarEdit = document.getElementById("btnGuardarEdit");
+  const btnCancelarEdit = document.getElementById("btnCancelarEdit");
+
+  btnGuardarEdit.addEventListener("click", function(e) {
+    e.preventDefault();
+    if (!validateEditForm()) return;
+    showLoadingOverlay();
+    setTimeout(() => {
+      document.getElementById("editBusForm").submit();
+    }, 1500);
+  });
+  
+  btnCancelarEdit.addEventListener("click", () => {
+    window.history.back();
+  });
+
+  function validateEditForm() {
+    // Nos aseguramos de que los campos requeridos no estén vacíos
+    const modelo = document.getElementById("modelo").value.trim();
+    const propietario = document.getElementById("propietario").value.trim();
+    const estado = document.getElementById("estado").value;
+
+    if (!modelo || !propietario || !estado) {
+      showFloatingMessage("Complete todos los campos obligatorios.", "error");
+      return false;
+    }
+    return true;
+  }
+  
+  function showLoadingOverlay() {
+    const overlay = document.getElementById("loadingOverlay");
+    overlay.style.display = "flex";
+  }
+  
+  function showFloatingMessage(message, type) {
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "floating-message " + (type === "success" ? "success" : "error") + " show";
+    msgDiv.textContent = message;
+    document.body.appendChild(msgDiv);
+    setTimeout(() => {
+      msgDiv.classList.remove("show");
+      setTimeout(() => {
+        document.body.removeChild(msgDiv);
+      }, 500);
+    }, 3000);
+  }
+</script>
+{% endblock %}

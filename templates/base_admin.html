@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap y hojas de estilos personalizadas -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/base_admin.css">
+    <link rel="stylesheet" href="/static/css/lista_personal.css">
+
+    <link rel="stylesheet" href="/static/css/drivers.css">
+
+    <title>{% block title %}Dashboard{% endblock %}</title>
+</head>
+<body>
+    <!-- Encabezado y navegación -->
+    <div class="contenedor">
+        <div class="logo">
+            <img src="/static/images/arequipa.png" alt="Logo">
+        </div>
+        <div class="navbar">
+            <div class="menu">
+                <a href="{{ url_for('admin.admin_dashboard') }}"><img src="/static/images/home.png" class="icon" alt="Inicio"> Panel</a>
+                <a href="{{ url_for('admin.list_buses') }}"><img src="/static/images/autobus.png" class="icon" alt="Buses"> Lista de Buses</a>
+                <a href="{{ url_for('admin.list_drivers') }}"><img src="/static/images/personal.png" class="icon" alt="Personal"> Lista de Personal</a>
+                <a href="{{ url_for('admin.list_travels') }}"><img src="/static/images/Destinos.png" class="icon" alt="Destinos"> Viajes</a>
+                <a href="{{ url_for('admin.list_papeletas') }}"><img src="/static/images/tickects.png" class="icon" alt="Tickets"> Papeletas Viajes</a>
+            </div>
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        </div>
+        <!-- Botón de Cerrar Sesión -->
+        <button class="logout-btn" onclick="window.location.href='{{ url_for('auth.logout') }}'">
+          <img src="/static/images/salida.png" class="salida" alt="salida">
+      </button>
+      
+    </div>
+    
+    <!-- Contenido del Dashboard -->
+    <div class="dashboard-content">
+        <div class="dashboard-header">
+            {% block dashboard_header %}
+            <!-- Bloque para el encabezado personalizado (ej. búsqueda, títulos, etc.) -->
+            {% endblock %}
+        </div>
+        {% block content %}
+        <!-- Bloque para el contenido central -->
+        {% endblock %}
+    </div>
+    
+    <!-- Menú flotante para dispositivos móviles -->
+    <div class="menu-container">
+        <div class="burbuja" onclick="toggleFloatingMenu()">☰</div>
+        <div class="floating-menu">
+            <a href="{{ url_for('admin.admin_dashboard') }}"> Panel</a>
+            <a href="{{ url_for('admin.list_buses') }}"> Lista de Buses</a>
+            <a href="{{ url_for('admin.list_drivers') }}"> Lista de Personal</a>
+            <a href="{{ url_for('admin.list_travels') }}"> Viajes</a>
+            <a href="{{ url_for('admin.list_papeletas') }}"> Papeletas Viajes</a>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>&copy; 2025 AREQUIPA TOURS. Todos los derechos reservados.</p>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleFloatingMenu() {
+            const menu = document.querySelector(".floating-menu");
+            menu.classList.toggle("show");
+        }
+        function toggleMenu() {
+            // Implementa la lógica para el menú en dispositivos pequeños, si es necesario
+        }
+    </script>
+    {% block scripts %}
+    <!-- Bloque para scripts adicionales -->
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,82 @@
+/* Solo se aplicará cuando el body tenga la clase "login-page" */
+body.login-page {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url('/static/images/Sp_fondo.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.login-container {
+    background-color: #ffffff7d;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: auto;
+    max-width: 400px;
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #DC2400;
+}
+
+.login-container img {
+    margin-bottom: 45px;
+    margin-top: 20px;
+    border-radius: 8px;
+}
+
+.login-container label {
+    font-size: 16px;
+    color: #ffffff;
+    padding: 5px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px #757575;
+    display: block;
+    text-align: start;
+    margin-left: 60px;
+}
+
+.login-container input {
+    width: calc(75% - 40px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #9c9c9c96;
+    border-radius: 8px;
+    outline: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 10px 30px rgba(16, 15, 15, 0.742);
+}
+
+.login-container input::placeholder {
+    color: #b5b2b1;
+}
+
+.login-container button {
+    width: auto !important;
+    padding: 10px 20px;
+    margin-top: 26px;
+    background-color: #e45209;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(16, 15, 15, 0.742);
+}
+
+.login-container button:hover {
+    background-color: #f05f17;
+}

@@ -1,0 +1,283 @@
+{% extends "base_admin.html" %}
+
+{% block title %}
+  Lista de Buses
+{% endblock %}
+
+{% block dashboard_header %}
+<div class="text-center mb-4">
+  <h2 class="main-title">
+    LISTA DE BUSES
+    <img src="/static/images/autobus.png" alt="icono bus" class="icono-titulo">
+  </h2>
+</div>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/lista_buses.css">
+<div class="container-fluid container-lista-buses">
+  <!-- Fila 1: Botón “Añadir Nuevo Bus” + Buscador -->
+  <div class="row align-items-center mb-3">
+    <div class="col-12 d-flex align-items-center gap-3">
+      <button class="btn-add-bus" onclick="window.location.href='{{ url_for('admin.new_bus') }}'">
+        <img src="/static/images/autobus.png" alt="icono añadir" class="icon-add-bus me-1">
+        Añadir Nuevo Bus
+      </button>
+      <div class="d-flex align-items-center">
+        <label for="buscarBus" class="label-buscar-bus me-2">Buscar:</label>
+        <div class="input-group input-group-bus-buscar">
+          <input type="text" id="buscarBus" class="form-control input-search-bus" placeholder="Placa, Propietario">
+          <button class="button-search-bus" type="button" id="btnBuscarBus">
+            <img src="/static/images/buscar.png" alt="buscar" class="icon-search-bus">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fila 2: Título -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="main-title">
+        LISTA DE BUSES
+        <img src="/static/images/autobus.png" alt="icono bus" class="icono-titulo">
+      </h2>
+    </div>
+  </div>
+
+  <!-- Tabla de Buses -->
+  <div class="table-responsive mb-5">
+    <table class="table table-bordered align-middle table-buses" id="busTable">
+      <thead>
+        <tr>
+          <th>Placa</th>
+          <th>Pisos</th>
+          <th>Total de Asientos</th>
+          <th>Propietario</th>
+          <th>Estado</th>
+          <th>Info</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for bus in buses %}
+        <tr data-bus='{{ bus | tojson | safe }}'
+            data-placa="{{ bus.placa | lower }}"
+            data-propietario="{{ bus.propietario | lower }}">
+          <td>{{ bus.placa }}</td>
+          <td>{{ bus.pisos }}</td>
+          <td>{{ bus.capacidad }}</td>
+          <td>{{ bus.propietario }}</td>
+          <td>{{ bus.estado }}</td>
+          <td>
+            <button class="btn-action-bus btn-ver-bus" onclick="showBusInfo(this)">VER</button>
+          </td>
+          <td>
+            <button class="btn-action-bus btn-editar-bus"
+                    onclick="window.location.href='{{ url_for('admin.edit_bus', bus_id=bus._id) }}'">
+              EDITAR
+            </button>
+            <form action="{{ url_for('admin.delete_bus', bus_id=bus._id) }}"
+                  method="POST" class="deleteForm" style="display:inline;">
+              <button type="button" class="btn-action-bus btn-eliminar-bus"
+                      onclick="confirmDeleteBus(this.form)">
+                ELIMINAR
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" class="text-center">No hay buses registrados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal para ver información completa del bus -->
+<div id="busInfoModal" class="modal">
+  <div class="modal-dialog" style="max-width: 40%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Información del Bus</h5>
+        <button type="button" class="btn-close" onclick="closeBusInfoModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="busInfoContent">
+        <!-- Aquí se inyecta la info y la maqueta de asientos -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeBusInfoModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Confirmación para Eliminar Bus -->
+<div id="deleteBusModal" class="modal" tabindex="-1">
+  <div class="modal-dialog" style="max-width: 400px; margin: 15% auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmación</h5>
+        <button type="button" class="btn-close" onclick="closeDeleteBusModal()"></button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estás seguro de eliminar este bus?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeDeleteBusModal()">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBusBtn">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mensaje flotante de confirmación -->
+<div id="deleteConfirmationMessage" class="alert alert-success" style="display:none;">
+  Bus eliminado exitosamente.
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // --- Filtrado por Placa/Propietario ---
+  const buscarBusInput = document.getElementById('buscarBus');
+  const busTableBody = document.getElementById('busTable').querySelector('tbody');
+  buscarBusInput.addEventListener('input', function() {
+    const filter = this.value.trim().toLowerCase();
+    [...busTableBody.rows].forEach(row => {
+      const placa = row.getAttribute('data-placa') || "";
+      const propietario = row.getAttribute('data-propietario') || "";
+      row.style.display = (placa.includes(filter) || propietario.includes(filter)) ? "" : "none";
+    });
+  });
+
+  // --- Modal Eliminar Bus ---
+  let formToDeleteBus = null;
+  function confirmDeleteBus(form) {
+    formToDeleteBus = form;
+    document.getElementById('deleteBusModal').style.display = 'block';
+  }
+  function closeDeleteBusModal() {
+    document.getElementById('deleteBusModal').style.display = 'none';
+  }
+  document.getElementById('confirmDeleteBusBtn').addEventListener('click', function() {
+    localStorage.setItem('busDeleteSuccess', 'Bus eliminado correctamente');
+    document.getElementById('deleteBusModal').style.display = 'none';
+    formToDeleteBus.submit();
+  });
+
+  // --- Mensaje Éxito al Eliminar ---
+  window.addEventListener('load', function() {
+    const successMessage = localStorage.getItem('busDeleteSuccess');
+    if (successMessage) {
+      const alertDiv = document.getElementById('deleteConfirmationMessage');
+      alertDiv.innerText = successMessage;
+      alertDiv.style.display = 'block';
+      localStorage.removeItem('busDeleteSuccess');
+      setTimeout(function() {
+        alertDiv.style.opacity = '0';
+        setTimeout(() => {
+          alertDiv.style.display = 'none';
+          alertDiv.style.opacity = '1';
+        }, 500);
+      }, 4000);
+    }
+  });
+
+  // --- Modal VER Info de Bus ---
+  function showBusInfo(btn) {
+    const row = btn.closest("tr");
+    const busData = JSON.parse(row.getAttribute('data-bus'));
+
+    // Info básica
+    let html = `
+      <div class="bus-info-basic">
+        <p><strong>Placa:</strong> ${busData.placa}</p>
+        <p><strong>Modelo:</strong> ${busData.modelo}</p>
+        <p><strong>Pisos:</strong> ${busData.pisos}</p>
+        <p><strong>Total de Asientos:</strong> ${busData.capacidad}</p>
+        <p><strong>Propietario:</strong> ${busData.propietario}</p>
+        <p><strong>Estado:</strong> ${busData.estado}</p>
+      </div>
+    `;
+
+    // 1) Listar asientos flotantes si existen (isExtra=true)
+    if (busData.estructura_asientos) {
+      const extras = busData.estructura_asientos.filter(s => s.isExtra === true);
+      if (extras.length > 0) {
+        html += `<div class="mb-2"><strong>Asientos Flotantes:</strong><ul>`;
+        extras.forEach(ext => {
+          // Muestra su seatNumber
+          let seatLabel = ext.seatNumber || "SN";
+          html += `<li>Asiento: ${seatLabel}</li>`;
+        });
+        html += `</ul></div>`;
+      }
+    }
+
+    // 2) Estructura de asientos en grilla
+    if (busData.estructura_asientos && busData.estructura_asientos.length > 0) {
+      // Agrupar asientos de grilla
+      const floors = {};
+      busData.estructura_asientos.forEach(seat => {
+        // seat.row, seat.col, seat.type, seat.seatNumber
+        if (seat.row === undefined || seat.col === undefined) return;
+        if (!floors[seat.floor]) floors[seat.floor] = [];
+        floors[seat.floor].push(seat);
+      });
+
+      const floorNumbers = Object.keys(floors).sort((a,b)=> b - a);
+      floorNumbers.forEach(floorNum => {
+        html += `<h5 class="bus-floor-title">Piso ${floorNum}</h5>`;
+        const seats = floors[floorNum];
+        let maxRow = 0, maxCol = 0;
+        seats.forEach(seat => {
+          if(seat.row > maxRow) maxRow = seat.row;
+          if(seat.col > maxCol) maxCol = seat.col;
+        });
+
+        html += `<div class="bus-grid">`;
+        for (let r=0; r<=maxRow; r++){
+          if(r===2 && maxRow>=2){
+            // PASILLO
+            html += `<div class="bus-row pasillo-row"><div class="bus-cell">PASILLO</div></div>`;
+          }
+          html += `<div class="bus-row">`;
+          for(let c=0; c<=maxCol; c++){
+            const seat = seats.find(s => s.row===r && s.col===c);
+            let display="", cellClass="bus-cell";
+            if(seat){
+              // seat.type => seat,bano,escalera,entrada
+              if(seat.type==="seat"){
+                display = seat.seatNumber || "";
+                cellClass += " seat-regular";
+              } else if(seat.type==="bano"){
+                display = "BAÑO";
+                cellClass += " seat-bano";
+              } else if(seat.type==="escalera"){
+                display = "ESC";
+                cellClass += " seat-escalera";
+              } else if(seat.type==="entrada"){
+                display = "ENT";
+                cellClass += " seat-entrada";
+              }
+            }
+            html += `<div class="${cellClass}">${display}</div>`;
+          }
+          html += `</div>`;
+        }
+        html += `</div>`;
+      });
+    }
+
+    document.getElementById("busInfoContent").innerHTML = html;
+    document.getElementById("busInfoModal").style.display = "block";
+  }
+
+  function closeBusInfoModal(){
+    document.getElementById("busInfoModal").style.display="none";
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,251 @@
+/*---------------------------------------------------------------------------
+  lista_personal.css
+
+  Estilos específicos para la página "Lista de Personal".
+  - Encabezados con colores por columna.
+  - Texto negro para la primera columna ("Nombre completo").
+  - Contenido de celdas y botones centrados.
+  - Bordes negros en la tabla (internos y externos).
+  - Botones "VER", "EDITAR", "ELIMINAR" con colores distintivos y bordes redondeados.
+  - Botón “Añadir nuevo personal” y estilos del buscador.
+  - Título principal con ícono escalado e invertido.
+---------------------------------------------------------------------------*/
+
+/*----- CONTENEDOR GENERAL (Opcional, para márgenes adicionales) -----*/
+.container-lista-personal {
+    padding: 20px;
+  }
+  
+  /*----- TÍTULO PRINCIPAL -----*/
+  .main-title {
+    font-size: 40px;       /* Tamaño grande */
+    font-weight: 700;      /* Negrita */
+    display: inline-block; /* Para que el ícono quede al lado */
+    vertical-align: middle;
+    margin-top: 3%;        /* Ajusta según tu diseño */
+  }
+  
+  /* Ícono al lado del título principal */
+  .icono-titulo {
+    width: 32px;
+    height: 32px;
+    margin-left: 8px;
+    margin-top: 3px;
+    vertical-align: middle;
+  
+    /* Invierte los colores al 100% (blanco ↔ negro) */
+    filter: invert(100%);
+  
+    /* Escala la imagen al 150% de su tamaño original */
+    transform: scale(1.5);
+  }
+  
+  /*----- BOTÓN: "AÑADIR NUEVO PERSONAL" -----*/
+  .btn-add-personal {
+    background-color: #333436; /* Gris oscuro */
+    color: #fff;               /* Texto en blanco */
+    border: none;              /* Sin borde */
+    border-radius: 26px;        /* Bordes redondeados */
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;       /* Para centrar el ícono y el texto verticalmente */
+    padding: 5px 20px;         /* Espacio interno */
+    cursor: pointer;           /* Manito al pasar */
+    margin-left: 1%;
+  }
+  
+  /* Ícono dentro del botón “Añadir” */
+  .icon-add-person {
+    width: 38px;       /* Más grande si deseas */
+    height: 38px;
+    margin-right: 5px; /* Separación del texto */
+    vertical-align: middle;
+    margin-top: 5px;   /* Ajusta según tu gusto */
+  }
+  
+  /*----- BUSCADOR (LABEL, INPUT, BOTÓN) -----*/
+  .label-buscar {
+    font-weight: 700;
+    color: #333436; /* Texto gris oscuro */
+  }
+  
+  .input-group-buscar .input-search {
+    border-radius: 6px 0 0 6px;
+    /* Agrega más estilos si deseas */
+  }
+  
+  .button-search {
+    background-color: #D9D9D9; /* Gris claro */
+    color: #333436;           /* Texto gris oscuro */
+    border: none;
+    border-radius: 0 6px 6px 0;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 10px;
+    cursor: pointer;
+  }
+  
+  .icon-search {
+    width: 25px; 
+    height: 20px;
+  }
+  
+  /*----- TABLA DE PERSONAL -----*/
+  
+  /*
+    border-collapse: collapse => fusiona bordes adyacentes.
+    border: 1px solid #000 => borde externo negro.
+  */
+  .table-personal {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0 auto;
+    border: 1px solid #000; /* Borde externo negro */
+    margin-top: 1%;
+  }
+  
+  /* Aplica bordes internos negros a th y td */
+  .table-personal th,
+  .table-personal td {
+    border: 1px solid #000 !important;
+  }
+  
+  /* Encabezado de la tabla:
+     - Texto centrado
+     - Colores por columna
+  */
+  .table-personal thead th {
+    text-align: center !important;
+    vertical-align: middle !important;
+    padding: 12px;
+    font-weight: 700;
+    color: #fff; /* Por defecto, texto blanco */
+  }
+  
+  /* 
+    Columna 1 (Nombre completo) => fondo gris claro (#C6CFCE), 
+                                   texto negro (#000).
+  */
+  .table-personal thead th:nth-child(1) {
+    background-color: #C6CFCE !important;
+    color: #000 !important; 
+  }
+  
+  /* 
+    Col 2 (Cargo), 3 (Teléfono), 6 (Acciones) => fondo gris oscuro (#333436),
+                                                 texto blanco (hereda color #fff).
+  */
+  .table-personal thead th:nth-child(2),
+  .table-personal thead th:nth-child(3),
+  .table-personal thead th:nth-child(6) {
+    background-color: #333436 !important;
+    width: 500px; /* Ajusta este valor según lo que necesites */
+    min-width: 150px; /* Establece un mínimo para evitar que se haga muy pequeña */
+    max-width: 180px; /* Evita que crezca demasiado */
+
+  }
+  
+  /* 
+    Col 4 (Licencia) => naranja (#F77014), texto blanco.
+  */
+  .table-personal thead th:nth-child(4) {
+    background-color: #F77014 !important;
+  }
+  
+  /* 
+    Col 5 (Info) => verde (#00A713), texto blanco.
+  */
+  .table-personal thead th:nth-child(5) {
+    background-color: #00A713 !important;
+    width: 500px; /* Ajusta este valor según lo que necesites */
+    min-width: 150px; /* Establece un mínimo para evitar que se haga muy pequeña */
+    max-width: 180px; /* Evita que crezca demasiado */
+  }
+  
+  /* 
+    Celdas del cuerpo => 
+    - Texto centrado 
+    - Fondo blanco 
+    - Borde negro (ya definido arriba)
+  */
+  .table-personal tbody td {
+    padding: 10px;
+    color: #333;            /* Texto normal gris */
+    background-color: #fff; /* Fondo blanco */
+    text-align: center;     /* Centra horizontalmente */
+    vertical-align: middle; /* Centra verticalmente */
+    white-space: nowrap;    /* Evita que "Info" o botones se partan en 2 líneas */
+  }
+  
+  /*----- BOTONES DE ACCIÓN (VER, EDITAR, ELIMINAR) -----*/
+  .btn-action {
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+  
+  /* VER => verde (#00A713) */
+  .btn-ver {
+    background-color: #00A713;
+  }
+  
+  /* EDITAR => azul (#0072A7) */
+  .btn-editar {
+    background-color: #0072A7;
+  }
+  
+  /* ELIMINAR => rojo (#DC2400) */
+  .btn-eliminar {
+    background-color: #DC2400;
+  }
+  /* Botón para limpiar la búsqueda (X) */
+.button-clear-search {
+  background-color: transparent;
+  border: none;
+  padding: 0 5px;
+  cursor: pointer;
+  /* Siempre visible, sin display:none */
+}
+
+.icon-clear {
+  width: 25px;   /* Ajusta el tamaño según necesites */
+  height: 25px;
+  filter: invert(0%); /* Sin invertir colores; se mostrará en su color original */
+}
+
+/* Si quieres forzar un color rojo para el icono (en caso de que la imagen sea neutra), 
+   podrías usar una propiedad CSS para SVG o forzar un color en un icono font, pero
+   si es una imagen, es recomendable editarla externamente o usar un SVG.
+   Aquí un ejemplo usando filter para tonalizar la imagen (esto funciona mejor con imágenes SVG):
+*/
+.icon-clear {
+  width: 25px;
+  height: 25px;
+  filter: brightness(0) saturate(100%) invert(22%) sepia(92%) saturate(7494%) hue-rotate(356deg) brightness(101%) contrast(107%);
+  /* Los valores anteriores intentan darle un tono rojizo */
+}
+
+/* Asegúrate de que el input-group tenga un espacio adecuado para mostrar ambos botones */
+.input-group-buscar {
+  position: relative;
+}
+
+.input-group-buscar .button-clear-search,
+.input-group-buscar .button-search {
+  /* Alinea ambos botones en el lado derecho */
+  position: relative;
+  z-index: 2;
+}
+
+.input-group-buscar .button-clear-search {
+  margin-right: 5px;
+}
+
+/* Tabla de Personal */
+.table-responsive {
+    margin-bottom: 40px; /* Añadido margen inferior */
+}

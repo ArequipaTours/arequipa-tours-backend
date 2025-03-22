@@ -1,0 +1,159 @@
+/* Ajustes generales */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Encabezado superior donde dice "VENTANILLA" */
+  .ventanilla-header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+  }
+  .ventanilla-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 10px;
+  }
+  
+  /* Contenedor principal */
+  .ventanilla-main {
+    padding: 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+    min-height: calc(100vh - 60px);
+  }
+  
+  /* Sección central con hora y fecha */
+  .ventanilla-info {
+    margin-bottom: 20px;
+  }
+  .ventanilla-time {
+    font-size: 50px;
+    margin: 10px 0;
+    color: #000;
+  }
+  .ventanilla-date {
+    font-size: 18px;
+    margin: 5px 0;
+    color: #666;
+  }
+  .ventanilla-subtitle {
+    font-size: 24px;
+    margin: 10px 0;
+  }
+  
+  /* Formulario de búsqueda */
+  .ventanilla-search {
+    margin-bottom: 20px;
+  }
+  .search-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .search-form label {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  .search-form input[type="text"],
+  .search-form input[type="date"],
+  .search-form input[type="time"] {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .btn-search {
+    background-color: #F77014;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+  }
+  .btn-search:hover {
+    background-color: #d65a06;
+  }
+  
+  /* Contenedor de la tabla */
+  .ventanilla-table-container {
+    margin: 0 auto;
+    width: 90%;
+    max-width: 1000px;
+  }
+  
+  /* Tabla de viajes con separación y líneas gruesas */
+  .viajes-table {
+    width: 100%;
+    border-collapse: collapse; /* Changed from separate to collapse */
+    margin: 0 auto;
+  }
+  .viajes-table th,
+  .viajes-table td {
+    border: 2px solid #666;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  /* Encabezado: cada columna con color de fondo medio plomo oscuro y otros tonos */
+  .viajes-table thead th {
+    font-weight: bold;
+    color: #fff;
+  }
+  /* Columna 1: Origen */
+  .viajes-table thead th:nth-child(1) {
+    background-color: #47494d;
+  }
+  /* Columna 2: Destino */
+  .viajes-table thead th:nth-child(2) {
+    background-color: #47494d;
+  }
+  /* Columna 3: Fecha */
+  .viajes-table thead th:nth-child(3) {
+    background-color: #47494d;
+  }
+  /* Columna 4: Hora */
+  .viajes-table thead th:nth-child(4) {
+    background-color: #47494d;
+
+  }
+  /* Columna 5: Bus */
+  .viajes-table thead th:nth-child(5) {
+    background-color: #47494d;
+  }
+  /* Columna 6: Tipo de Servicio */
+  .viajes-table thead th:nth-child(6) {
+    background-color: #47494d;
+  }
+  /* Columna 7: Acciones */
+  .viajes-table thead th:nth-child(7) {
+    background-color: #40b92b;
+  }
+  
+  /* Filas pares con fondo gris suave */
+  .viajes-table tbody tr:nth-child(even) {
+    background-color: #47494d;
+  }
+  
+  /* Estilo para las celdas del cuerpo */
+  .viajes-table tbody td {
+    background-color: #fff;
+    color: #333;
+  }
+  
+  /* Botón de acción en la tabla */
+  .btn-sell {
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+  .btn-sell:hover {
+    background-color: #555;
+  }

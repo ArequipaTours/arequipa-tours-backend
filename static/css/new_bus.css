@@ -1,0 +1,213 @@
+/* new_bus.css */
+
+/* Contenedor principal centrado y con ancho máximo */
+.container-fluid {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Títulos grandes */
+h2.text-center {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+/* Datos básicos (inputs) */
+.row.g-3.mb-4.justify-content-center {
+  margin-bottom: 2rem;
+}
+.form-label {
+  font-weight: bold;
+}
+.form-control {
+  font-size: 1.1rem;
+}
+#placa, #modelo {
+  text-transform: uppercase;
+}
+
+/* Inputs para la configuración de cada piso */
+#floorInputs {
+  margin-bottom: 1rem;
+}
+.floor-input-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.5rem;
+}
+.floor-input-group label {
+  font-weight: bold;
+}
+.floor-input-group .form-control {
+  width: 80px;
+}
+
+/* Contenedor principal de asientos */
+#seatContainer {
+  margin-top: 20px;
+  padding: 10px;
+  width: 100%;
+  min-height: 500px; 
+  border: 1px dashed #999;
+  position: relative; 
+}
+
+/* Filas de la grilla */
+.seat-row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 5px;
+  position: relative;
+}
+
+
+
+/* Celdas de la grilla */
+.seat-cell {
+  width: 60px;
+  height: 60px;
+  background-color: #0CC322; 
+  border: 1px solid #999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, font-size 0.3s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fff;
+}
+
+/* Celdas de tipo especial */
+.seat-cell-bano,
+.seat-cell-escalera,
+.seat-cell-entrada {
+  background-color: #fff !important;
+  color: #000;
+}
+
+/* Asientos extra arrastrables */
+.draggable-seat {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background-color: #0CC322;
+  border: 1px solid #444;
+  border-radius: 6px;
+  cursor: move;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Botón "X" para eliminar el asiento extra */
+.draggable-seat .delete-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Modal de cambio de tipo (pantalla completa) */
+.type-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+.type-menu > div {
+  background-color: #f5f5f5;
+  padding: 20px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+/* Botones Guardar / Cancelar */
+.btn-success,
+.btn-danger,
+.btn-info {
+  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Overlay de carga */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+.loading-text {
+  margin-top: 15px;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+/* Mensajes flotantes (exito/error) */
+.floating-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  border-radius: 5px;
+  z-index: 4000;
+  font-size: 1.1rem;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.floating-message.show {
+  opacity: 1;
+}
+.floating-message.success {
+  background-color: #28a745;
+  color: #fff;
+}
+.floating-message.error {
+  background-color: #dc3545;
+  color: #fff;
+}
+/* Pasillo horizontal entre fila 2 y 3 */
+.seat-row.pasillo-row {
+  height: 80px; /* Ajustado para mayor espacio */
+  background-color: transparent;
+  margin-bottom: 5px;
+}
+
+/* Línea gruesa entre pisos */
+.floor-divider {
+  height: 6px;
+  background-color: #333;
+  margin: 20px 0;
+  border-radius: 3px;
+}

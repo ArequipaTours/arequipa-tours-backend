@@ -1,0 +1,180 @@
+/* Base General */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Contenedor y Header */
+.contenedor {
+    display: flex;
+    align-items: stretch; /* Los elementos hijos se estiran para ocupar todo el alto */
+    background-color: #333;
+}
+.logo {
+    background-color: black;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+.logo img {
+    width: 400px;
+    height: auto;
+    object-fit: contain;
+}
+.navbar {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;  /* Centra el contenido horizontalmente */
+    align-items: center;
+    color: white;
+    position: relative;  /* Para posicionar el botón de logout */
+}
+.menu {
+    display: flex;
+    gap: 80px;
+}
+.menu a {
+    text-decoration: none;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    gap: 10px; /* Espacio entre icono y texto */
+}
+.icon {
+    width: 70px;
+}
+.menu a:hover {
+    background-color: #C6CFCE;
+    border-radius: 5px;
+    color: #f71414;
+    transition: 0.5s;
+}
+
+/* Botón de Logout */
+.logout-btn {
+    right: 20px; /* Distancia desde el borde derecho */
+    background-color: #F77014;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.salida {
+    width: 40px;
+}
+.logout-btn:hover {
+    background-color: #cc0000;
+}
+
+/* Menú Icon (para dispositivos pequeños) */
+.menu-icon {
+    display: none;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+/* Menú Flotante */
+.burbuja {
+    display: none;
+}
+.floating-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.floating-menu a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    border-bottom: 1px solid white;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    gap: 8px;
+}
+.floating-menu a:last-child {
+    border-bottom: none;
+}
+.floating-menu.show {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Footer */
+.footer {
+    background-color: #3d3d3d;
+    padding: 100spx;
+    text-align: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    font-size: 14px;
+    color: #C6CFCE;
+}
+.footer p {
+    margin: 0;
+}
+
+/* Media Query - Base (Ajustes para pantallas pequeñas) */
+@media (max-width: 768px) {
+    .contenedor {
+        flex-wrap: wrap;
+    }
+    .logo {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    .logo img {
+        width: 200px;
+    }
+    .navbar {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .menu {
+        display: none;
+    }
+    .burbuja {
+        display: block; 
+        position: fixed;
+        background-color: #333;
+        bottom: 90px; 
+        right: 0px;
+        transform: translateY(1); 
+        transition: transform 0.3s ease; 
+        width: 50px;
+        height: 50px;
+        border-radius: 50%; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+    }
+    .logout-btn {
+        position: absolute;
+        top: 10px;
+    }
+    .salida {
+        width: 30px;
+    }
+}

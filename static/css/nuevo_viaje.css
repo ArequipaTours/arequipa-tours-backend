@@ -1,0 +1,155 @@
+/* nuevo_viaje.css */
+
+/* Contenedor principal */
+.container-nuevo-viaje {
+  padding: 20px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Título y subtítulo */
+.titulo-formulario {
+  margin-bottom: 20px;
+}
+.main-title {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.icon-title-viaje {
+  width: 40px;
+  height: 40px;
+  vertical-align: middle;
+  filter: invert(100%);
+}
+.subtitle {
+  font-size: 16px;
+  text-align: center;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Contenedor del formulario */
+.form-container {
+  background-color: #f2f2f2;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  width: 100%;
+}
+
+/* Fieldset y leyendas */
+.fieldset {
+  border: 2px solid #333;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+.legend {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* Filas y grupos del formulario */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.form-group {
+  flex: 1;
+  min-width: 220px;
+}
+.full-width {
+  flex: 1 1 100%;
+}
+
+/* Etiquetas */
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+/* Inputs y selects */
+.form-control {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #333;
+  border-radius: 12px; /* Increased rounding */
+  background-color: #fff;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+  margin-bottom: 10px;
+}
+
+/* Botones de acción */
+.form-actions {
+  margin-top: 20px;
+  text-align: center;
+}
+.btn-guardar {
+  background-color: #F77014;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px; /* Increased rounding */
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 15px;
+}
+.btn-cancelar {
+  background-color: #DC2400;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px; /* Increased rounding */
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Overlay de carga */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+.loading-text {
+  margin-top: 15px;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+/* Mensajes flotantes */
+.floating-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 5px;
+  z-index: 4000;
+  font-size: 1.1rem;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.floating-message.show {
+  opacity: 1;
+}
+.floating-message.success {
+  background-color: #28a745;
+  color: #fff;
+}
+.floating-message.error {
+  background-color: #dc3545;
+  color: #fff;
+}

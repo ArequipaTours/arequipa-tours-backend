@@ -1,0 +1,263 @@
+{% extends "base_admin.html" %}
+
+{% block title %}
+  Lista de Personal
+{% endblock %}
+
+{% block dashboard_header %}
+
+<!-- Contenedor para el título principal (centrado) -->
+<div class="text-center mb-3">
+  <h2 class="main-title">
+    LISTA DE PERSONAL
+    <img src="/static/images/personal.png" alt="icono personal" class="icono-titulo">
+  </h2>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid container-lista-personal">
+  <!-- Sección con el botón "Añadir nuevo personal" y el buscador -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <button class="btn-add-personal" onclick="window.location.href='{{ url_for('admin.register_driver') }}'">
+        <img src="/static/images/personas.png" alt="icono añadir" class="icon-add-person me-1">
+        Añadir nuevo personal
+      </button>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end align-items-center">
+      <label for="buscarInput" class="label-buscar me-2">Buscar:</label>
+      <div class="input-group input-group-buscar" style="max-width: 300px; position: relative;">
+        <input type="text" id="buscarInput" class="form-control input-search" placeholder="Carnet, Nombre">
+        <!-- Botón para iniciar búsqueda -->
+        <button class="button-search" type="button" id="searchBtn">
+          <img src="/static/images/buscar.png" alt="buscar" class="icon-search">
+        </button>
+        <!-- Botón para limpiar la búsqueda, siempre visible -->
+        <button class="button-search button-clear-search" type="button" id="clearSearchBtn">
+          <img src="/static/images/X.png" alt="Limpiar búsqueda" class="icon-clear">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spinner de búsqueda (dentro del contenedor de la tabla) -->
+  <div id="searchLoading" style="display:none; text-align:center; margin-bottom:10px;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Buscando...</span>
+    </div>
+  </div>
+
+  <!-- Tabla de Personal -->
+  <div class="table-responsive" id="tableContainer">
+    <table class="table table-bordered align-middle table-personal" id="driversTable">
+      <thead>
+        <tr>
+          <th>Nombre completo</th>
+          <th>Cargo</th>
+          <th>Teléfono</th>
+          <th>Licencia</th>
+          <th>Info</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for persona in drivers %}
+        <tr data-carnet="{{ persona.CI | lower }}"
+            data-nombre="{{ persona.nombre | lower }}"
+            data-ci="{{ persona.CI }}"
+            data-ci_complement="{{ persona.ci_complement }}"
+            data-ci_department="{{ persona.ci_department }}"
+            data-fecha_nacimiento="{{ persona.fecha_nacimiento }}"
+            data-categoria="{{ persona.categoria_licencia }}"
+            data-fecha_emision="{{ persona.fecha_emision_licencia }}"
+            data-fecha_expiracion="{{ persona.fecha_expiracion_licencia }}">
+          <td>{{ persona.nombre }}</td>
+          <td>{{ persona.rol }}</td>
+          <td>{{ persona.telefono }}</td>
+          <td>{{ persona.numero_licencia }}</td>
+          <td>
+            <button class="btn-action btn-ver" onclick="showInfoModal(this)">VER</button>
+          </td>
+          <td>
+            <button class="btn-action btn-editar" onclick="window.location.href='{{ url_for('admin.edit_driver', driver_id=persona._id) }}'">EDITAR</button>
+            <form class="deleteForm" action="{{ url_for('admin.delete_driver', driver_id=persona._id) }}" method="POST" style="display:inline;">
+              <button type="button" class="btn-action btn-eliminar" onclick="confirmDeletion(this.form)">ELIMINAR</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr id="noResultsRow">
+          <td colspan="6" class="text-center">No hay personal registrado.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal de Información -->
+<div id="infoModal" class="modal" tabindex="-1" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog" style="margin: 10% auto; max-width: 600px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Información del Personal</h5>
+        <button type="button" class="btn-close" onclick="closeInfoModal()"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Nombre:</strong> <span id="infoNombre"></span></p>
+        <p><strong>Carnet (CI):</strong> <span id="infoCI"></span></p>
+        <p><strong>Complemento:</strong> <span id="infoComplemento"></span></p>
+        <p><strong>Extensión:</strong> <span id="infoExtension"></span></p>
+        <p><strong>Cargo:</strong> <span id="infoRol"></span></p>
+        <p><strong>Teléfono:</strong> <span id="infoTelefono"></span></p>
+        <p><strong>Licencia:</strong> <span id="infoLicencia"></span></p>
+        <p><strong>Fecha de Nacimiento:</strong> <span id="infoFechaNacimiento"></span></p>
+        <p><strong>Categoría de Licencia:</strong> <span id="infoCategoria"></span></p>
+        <p><strong>Fecha de Emisión:</strong> <span id="infoFechaEmision"></span></p>
+        <p><strong>Fecha de Expiración:</strong> <span id="infoFechaExpiracion"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeInfoModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación para eliminación -->
+<div id="confirmModal" class="modal" tabindex="-1" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog" style="margin: 15% auto; max-width: 400px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmación</h5>
+        <button type="button" class="btn-close" onclick="closeConfirmModal()"></button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estás seguro de eliminar este personal?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeConfirmModal()">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay de carga para eliminación -->
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+  <div class="spinner-border text-light" role="status">
+    <span class="visually-hidden">Cargando...</span>
+  </div>
+  <p class="loading-text">Procesando...</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Búsqueda: debounce
+  function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), delay);
+    }
+  }
+
+  const buscarInput = document.getElementById('buscarInput');
+  const driversTableBody = document.getElementById('driversTable').getElementsByTagName('tbody')[0];
+  const searchLoading = document.getElementById('searchLoading');
+  const clearSearchBtn = document.getElementById('clearSearchBtn');
+  const noResultsRow = document.getElementById('noResultsRow');
+
+  function filterTable() {
+    const filterValue = buscarInput.value.trim().toLowerCase();
+    searchLoading.style.display = 'block';
+    setTimeout(() => {
+      let hasVisible = false;
+      Array.from(driversTableBody.rows).forEach(row => {
+        const carnet = row.getAttribute('data-carnet') || "";
+        const nombre = row.getAttribute('data-nombre') || "";
+        if (carnet.includes(filterValue) || nombre.includes(filterValue)) {
+          row.style.display = '';
+          hasVisible = true;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      if (!hasVisible && filterValue !== "") {
+        if(noResultsRow) noResultsRow.style.display = '';
+      } else {
+        if(noResultsRow) noResultsRow.style.display = 'none';
+      }
+      searchLoading.style.display = 'none';
+    }, 500);
+  }
+
+  document.getElementById('searchBtn').addEventListener('click', function() {
+    filterTable();
+  });
+
+  buscarInput.addEventListener('input', debounce(filterTable, 300));
+
+  clearSearchBtn.addEventListener('click', function() {
+    buscarInput.value = '';
+    filterTable();
+  });
+
+  // Modal de confirmación para eliminación
+  let formToDelete = null;
+  function confirmDeletion(form) {
+    formToDelete = form;
+    document.getElementById('confirmModal').style.display = 'block';
+  }
+
+  function closeConfirmModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+  }
+
+  document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+    localStorage.setItem('driverDeleteSuccess', 'Personal eliminado correctamente');
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    if (formToDelete) {
+      formToDelete.submit();
+    }
+  });
+
+  // Mostrar mensaje flotante de éxito en list_drivers si existe en localStorage
+  window.addEventListener('load', function() {
+    const successMessage = localStorage.getItem('driverDeleteSuccess');
+    if (successMessage) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-success floating-message';
+      alertDiv.innerText = successMessage;
+      document.body.appendChild(alertDiv);
+      localStorage.removeItem('driverDeleteSuccess');
+      setTimeout(function() {
+        alertDiv.style.opacity = '0';
+        setTimeout(() => alertDiv.remove(), 500);
+      }, 3000);
+    }
+  });
+
+  // Función para mostrar el modal de información
+  function showInfoModal(button) {
+    const row = button.closest('tr');
+    document.getElementById('infoModal').style.display = 'block';
+    document.getElementById('infoNombre').innerText = row.querySelector('td:nth-child(1)').innerText;
+    document.getElementById('infoCI').innerText = row.getAttribute('data-ci') || '';
+    document.getElementById('infoComplemento').innerText = row.getAttribute('data-ci_complement') || 'N/A';
+    document.getElementById('infoExtension').innerText = row.getAttribute('data-ci_department') || '';
+    document.getElementById('infoRol').innerText = row.querySelector('td:nth-child(2)').innerText;
+    document.getElementById('infoTelefono').innerText = row.querySelector('td:nth-child(3)').innerText;
+    document.getElementById('infoLicencia').innerText = row.querySelector('td:nth-child(4)').innerText;
+    document.getElementById('infoFechaNacimiento').innerText = row.getAttribute('data-fecha_nacimiento') || '';
+    document.getElementById('infoCategoria').innerText = row.getAttribute('data-categoria') || '';
+    document.getElementById('infoFechaEmision').innerText = row.getAttribute('data-fecha_emision') || '';
+    document.getElementById('infoFechaExpiracion').innerText = row.getAttribute('data-fecha_expiracion') || '';
+  }
+
+  function closeInfoModal() {
+    document.getElementById('infoModal').style.display = 'none';
+  }
+</script>
+{% endblock %}

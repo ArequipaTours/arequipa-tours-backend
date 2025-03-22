@@ -1,0 +1,77 @@
+/* editar_bus.css */
+
+/* Contenedor principal centrado y con ancho máximo */
+.container-fluid {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+h2.text-center {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+/* Datos básicos del formulario */
+.row.g-3.mb-4.justify-content-center {
+  margin-bottom: 2rem;
+}
+.form-label {
+  font-weight: bold;
+}
+.form-control {
+  font-size: 1.1rem;
+}
+#placa {
+  text-transform: uppercase;
+  background-color: #d3d3d3; /* Fondo medio plomo para indicar no editable */
+}
+
+/* Botones de acción */
+.btn-success, .btn-danger {
+  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Overlay de carga */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+.loading-text {
+  margin-top: 15px;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+/* Mensajes flotantes */
+.floating-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 5px;
+  z-index: 4000;
+  font-size: 1.1rem;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.floating-message.show {
+  opacity: 1;
+}
+.floating-message.success {
+  background-color: #28a745;
+  color: #fff;
+}
+.floating-message.error {
+  background-color: #dc3545;
+  color: #fff;
+}

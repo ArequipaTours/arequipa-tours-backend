@@ -1,0 +1,209 @@
+{% extends "base_admin.html" %}
+
+{% block title %}
+  Nuevo Viaje
+{% endblock %}
+
+{% block dashboard_header %}
+<!-- (Opcional: Puedes colocar un título adicional aquí si lo deseas) -->
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/nuevo_viaje.css">
+
+<div class="container-nuevo-viaje">
+  <!-- Título y subtítulo -->
+  <div class="titulo-formulario text-center">
+    <h2 class="main-title">
+      <img src="/static/images/destinos2.png" alt="icono viaje" class="icon-title-viaje">
+      REGISTRAR NUEVO VIAJE
+    </h2>
+    <p class="subtitle">Complete los datos del viaje</p>
+  </div>
+
+  <!-- Formulario principal -->
+  <div class="form-container">
+    <form id="formNuevoViaje" method="post" action="{{ url_for('admin.new_viaje') }}">
+      
+      <!-- DATOS DE VIAJE -->
+      <fieldset class="fieldset">
+        <legend class="legend">Datos de Viaje</legend>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="origen">Origen:</label>
+            <select id="origen" name="origen" class="form-control" required>
+              <option value="">Seleccione Origen</option>
+              <!-- El Alto se elimina del origen -->
+              <option value="La Paz">La Paz</option>
+              <option value="Potosí">Potosí</option>
+              <option value="Uyuni">Uyuni</option>
+              <option value="Cochabamba">Cochabamba</option>
+              <option value="Tupiza">Tupiza</option>
+              <option value="Villazón">Villazón</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="destino">Destino:</label>
+            <select id="destino" name="destino" class="form-control" required>
+              <option value="">Seleccione Destino</option>
+              <!-- El Alto se elimina también del destino -->
+              <option value="La Paz">La Paz</option>
+              <option value="Potosí">Potosí</option>
+              <option value="Uyuni">Uyuni</option>
+              <option value="Cochabamba">Cochabamba</option>
+              <option value="Tupiza">Tupiza</option>
+              <option value="Villazón">Villazón</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="hora">Hora:</label>
+            <input type="time" id="hora" name="hora" class="form-control" required>
+          </div>
+        </div>
+      </fieldset>
+      
+      <!-- SELECCIÓN DE BUS -->
+      <fieldset class="fieldset">
+        <legend class="legend">Seleccionar Bus</legend>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bus">Bus:</label>
+            <select id="bus" name="bus" class="form-control" required>
+              <option value="">Seleccione Bus</option>
+              {% for b in buses %}
+              <option value="{{ b._id }}">{{ b.placa }} - {{ b["tipo de servicio"] or b.tipoServicio }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Servicio:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="leito" name="tipoServicioViaje" value="Leito">
+              <label class="form-check-label" for="leito">Leito</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="semiCama" name="tipoServicioViaje" value="Semi Cama">
+              <label class="form-check-label" for="semiCama">Semi Cama</label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      
+      <!-- DATOS DE CONDUCTORES -->
+      <fieldset class="fieldset">
+        <legend class="legend">Datos de los Conductores en Cabina del Bus</legend>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="chofer">Chofer:</label>
+            <select id="chofer" name="chofer" class="form-control" required>
+              <option value="">Seleccione Chofer</option>
+              {% for d in drivers %}
+              <option value="{{ d._id }}" data-licencia="{{ d.numero_licencia }}">{{ d.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="licenciaChofer">Licencia Chofer:</label>
+            <input type="text" id="licenciaChofer" name="licenciaChofer" class="form-control" readonly>
+          </div>
+          <div class="form-group">
+            <label for="relevo">Relevo:</label>
+            <select id="relevo" name="relevo" class="form-control" required>
+              <option value="">Seleccione Relevo</option>
+              {% for d in drivers %}
+              <option value="{{ d._id }}" data-licencia="{{ d.numero_licencia }}">{{ d.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="licenciaRelevo">Licencia Relevo:</label>
+            <input type="text" id="licenciaRelevo" name="licenciaRelevo" class="form-control" readonly>
+          </div>
+        </div>
+      </fieldset>
+      
+      <!-- BOTONES DE ACCIÓN -->
+      <div class="form-actions text-center">
+        <button type="submit" class="btn-guardar">Guardar</button>
+        <button type="reset" class="btn-cancelar" onclick="window.location.href='{{ url_for('admin.list_travels') }}'">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Overlay de carga -->
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+  <div class="spinner-border text-light" role="status">
+    <span class="visually-hidden">Cargando...</span>
+  </div>
+  <p class="loading-text">Procesando...</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Ajustar fecha a la zona horaria de Bolivia (UTC-4) para hoy
+    const today = new Date();
+    today.setUTCHours(today.getUTCHours() - 4);
+    document.getElementById("fecha").value = today.toISOString().split("T")[0];
+
+    // Completar licencia de chofer
+    document.getElementById("chofer").addEventListener("change", function() {
+      const selected = this.options[this.selectedIndex];
+      document.getElementById("licenciaChofer").value = selected.getAttribute("data-licencia") || "";
+    });
+    
+    // Completar licencia de relevo
+    document.getElementById("relevo").addEventListener("change", function() {
+      const selected = this.options[this.selectedIndex];
+      document.getElementById("licenciaRelevo").value = selected.getAttribute("data-licencia") || "";
+    });
+
+    // Validar que origen != destino y fecha mínima
+    document.getElementById("formNuevoViaje").addEventListener("submit", function(e) {
+      const origen = document.getElementById("origen").value;
+      const destino = document.getElementById("destino").value;
+      if (origen === destino) {
+        e.preventDefault();
+        showFloatingMessage("El origen y destino no pueden ser iguales.", "error");
+        return;
+      }
+      // Fecha no anterior al día antes de hoy
+      const fechaStr = document.getElementById("fecha").value;
+      const selectedDate = new Date(fechaStr);
+      const currentDate = new Date();
+      currentDate.setUTCHours(currentDate.getUTCHours() - 4);
+      currentDate.setDate(currentDate.getDate() - 1);
+      currentDate.setHours(0, 0, 0, 0);
+      if (selectedDate < currentDate) {
+        e.preventDefault();
+        showFloatingMessage("La fecha no puede ser anterior al día antes de la fecha actual.", "error");
+        return;
+      }
+      showLoadingOverlay();
+    });
+  });
+
+  function showLoadingOverlay() {
+    document.getElementById("loadingOverlay").style.display = "flex";
+  }
+
+  function showFloatingMessage(message, type) {
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "floating-message " + (type === "success" ? "success" : "error") + " show";
+    msgDiv.textContent = message;
+    document.body.appendChild(msgDiv);
+    setTimeout(() => {
+      msgDiv.classList.remove("show");
+      setTimeout(() => {
+        document.body.removeChild(msgDiv);
+      }, 500);
+    }, 3000);
+  }
+</script>
+{% endblock %}

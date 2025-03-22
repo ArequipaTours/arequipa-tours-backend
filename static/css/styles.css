@@ -1,0 +1,23 @@
+#ciComplement {
+    width: 180px;
+    margin-right: 10px;
+    margin-left: 20px;
+    
+}
+
+#ciDepartment {
+    width: 100px;
+    margin-left: 20%;
+    margin-top: -5%; /* Align with CI field */
+}
+
+.form-check {
+    margin-bottom: 2%; /* Align checkbox with CI field */
+}
+
+.d-flex.align-items-center .form-label {
+    margin-bottom: 15px; /* Align label with CI field */
+    margin-right: 10px; /* Add some space between label and select box */
+    margin-left: 40px;
+    margin-top: -25%; /* Align with CI field */
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Superadmin</title>
+  <!-- Incluye tus estilos si los tienes -->
+</head>
+<body>
+  <h1>Bienvenido, Superadmin</h1>
+  <nav>
+    <!-- Botón para registrar choferes/relevos -->
+    <a href="{{ url_for('admin.register_driver') }}">
+      <button>Registrar Chofer/Relevo</button>
+    </a>
+    <!-- Botón para registrar nuevos usuarios -->
+    <a href="{{ url_for('admin.register_user') }}">
+      <button>Registrar Usuario</button>
+    </a>
+    <!-- Botón para listar choferes/relevos -->
+    <a href="{{ url_for('admin.list_drivers') }}">
+      <button>Listar Choferes/Relevos</button>
+    </a>
+    <!-- Otros botones o enlaces que requieras -->
+  </nav>
+  <!-- Resto del contenido del dashboard -->
+</body>
+</html>
+

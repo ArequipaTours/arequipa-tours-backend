@@ -1,0 +1,157 @@
+/*---------------------------------------------------------------------------
+  viajes.css
+  Ajustado para que:
+   - Botón “Añadir Nuevo Viaje” a la izquierda.
+   - Campos de búsqueda a la derecha en una sola fila.
+   - Título VIAJES centrado, ícono con color invertido.
+   - Encabezados de tabla en naranja (#F77014), texto blanco.
+   - Celdas de tbody en gris (#D9D5D5).
+---------------------------------------------------------------------------*/
+
+/* Contenedor general */
+.container-viajes {
+    padding: 20px;
+  }
+  
+  /* Botón “Añadir Nuevo Viaje” */
+  .btn-add-viaje {
+    background-color: #333436;
+    color: #fff;
+    border: none;
+    border-radius: 26px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    cursor: pointer;
+    margin-top: 15%;
+    margin-left: 10%;
+  }
+  .icon-add-viaje {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+  
+  /* Etiquetas (“Buscar”, “Origen”, “Destino”, etc.) */
+  .label-buscar {
+    font-weight: 700;
+    color: #333436;
+    margin-top: 10%;
+  }
+  .label-buscar1 {
+    font-weight: 700;
+    color: #333436;
+    margin-top: -1%;
+    margin-left: 6%;
+  }
+  /* Inputs de búsqueda (Origen, Destino, Fecha...) */
+  .input-search {
+    border-radius: 26px;
+    background-color: #b4b4b4; 
+    /* Si quieres un gris claro interno, agrega: 
+       background-color: #f9f9f9; */
+    margin-right: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Borde con sombra */
+    padding: 8px;
+    margin-top: 10%;
+  }
+  
+  /* Botón lupa */
+  .button-search {
+    background-color: #D9D9D9;
+    color: #333436;
+    border: none;
+    border-radius: 26px;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 10px;
+    cursor: pointer;
+    margin-top: 1%;
+  }
+  .icon-search {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Título “VIAJES” */
+  .main-title {
+    font-size: 32px;
+    font-weight: 700;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: -3.5%;
+  }
+  .icon-title-viajes {
+    width: 60px;
+    height: 60px;
+    margin-left: 4px;
+    vertical-align: middle;
+    filter: invert(100%);  /* Invertimos el color para que se vea sobre fondo claro */
+  }
+  
+  /* Tabla de Viajes */
+  .table-viajes {
+    border-collapse: collapse;
+    margin-left: 4%;
+    border: 1px solid #000; /* Borde externo negro */
+    margin-top: 1%;
+    max-width: 93%;
+  }
+  
+  .table-viajes th, 
+  .table-viajes td {
+    border: 1px solid #000 !important; /* Bordes internos negros */
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px;
+  }
+  
+  /* Encabezado => naranja (#F77014) con texto blanco */
+  .table-viajes thead th {
+    background-color: #F77014 !important;
+    color: #fff !important;
+    font-weight: 700;
+  }
+  
+  /* Celdas del cuerpo => gris (#D9D5D5) */
+  .table-viajes tbody td {
+    background-color: #D9D5D5;
+    color: #333;
+  }
+
+  /* Botones de acciones */
+  .btn-edit {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+  
+  .btn-delete {
+    background-color: #f44336; /* Rojo */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+
+  .button-clear {
+    padding: 8px 14px;
+    border:#4CAF50;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  

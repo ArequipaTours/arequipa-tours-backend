@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="stylesheet" href="/static/css/reserva.css">
+  <title>Reserva y Ventas</title>
+  <style>
+    /* Asientos ocupados => rojo */
+    .seat.occupied {
+      background-color: #f00;
+      color: #fff;
+      cursor: not-allowed;
+    }
+    /* Los asientos disponibles y reservados se manejan con las clases .available y .reserved */
+
+    /* Sección para extras */
+    .extras-section {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px dashed #ccc;
+      text-align: center;
+    }
+    .extras-section h4 {
+      margin-bottom: 5px;
+    }
+    .extras-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .seat.extra {
+      border: 1px solid #888;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      min-width: 40px;
+      text-align: center;
+    }
+    .seat.extra.occupied {
+      background-color: #f00;
+      color: #fff;
+      cursor: not-allowed;
+    }
+
+    /* Modales generales */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+      animation: fadeIn 0.3s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 0;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .modal-header {
+      background-color: #F77014;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+      position: relative;
+    }
+    .modal-header .close {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .modal-body {
+      padding: 20px;
+      text-align: left;
+    }
+    .modal-footer {
+      padding: 15px;
+      text-align: center;
+      background-color: #f2f2f2;
+    }
+    .modal-footer button {
+      padding: 10px 20px;
+      background-color: #F77014;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .modal-footer button:hover {
+      background-color: #d65e0d;
+    }
+    /* Estilos para la tabla resumen del modal de confirmación */
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .summary-table th,
+    .summary-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    /* Estilos para las opciones de pago */
+    .payment-options {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 15px;
+    }
+    .payment-label {
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .payment-label input {
+      margin-right: 5px;
+    }
+    /* Modal de mensaje interactivo */
+    #messageModal .modal-content {
+      max-width: 400px;
+      background-color: #333;
+      color: #fff;
+    }
+    .total-price-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .total-price-container p {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .confirmation-message {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      z-index: 1001;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      flex: 1;
+      padding-bottom: 60px;
+    }
+
+    /* Estilo para el toggle ON/OFF con colores */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+      vertical-align: middle;
+    }
+    .switch input {
+      display: none;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: red; /* OFF => rojo */
+      transition: .4s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: green; /* ON => verde */
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navegación -->
+  <nav>
+    <div class="left">
+      <a href="{{ url_for('ventanilla.cajero_dashboard') }}">
+        <img src="/static/images/home.png" class="icon" alt="Ventas"> Pasajes
+      </a>
+    </div>
+    <div class="center">
+      <img src="/static/images/arequipa.png" alt="Logo" class="logo">
+    </div>
+    <div class="right">
+      <button class="logout" onclick="window.location.href='{{ url_for('auth.logout') }}'">
+        <img src="/static/images/salida.png" class="salida" alt="Cerrar sesión">
+      </button>
+    </div>
+  </nav>
+  
+  <!-- Variables globales para JS -->
+  <script>
+    var viajeId = "{{ viaje._id }}"; 
+    var userOrigin = "{{ user.origen|default('') }}";
+  </script>
+  
+  <!-- Contenedor principal: datos del viaje y grilla de asientos -->
+  <div class="container">
+    <h2>Asientos Disponibles</h2>
+    
+    <!-- Contenedor con data-* que guarda los datos originales -->
+    <p id="journeyInfo"
+       data-origen="{{ viaje.origen }}"
+       data-destino="{{ viaje.destino }}"
+       data-fecha="{{ viaje.fecha }}"
+       data-hora="{{ viaje.hora }}"
+       style="line-height:2.0;">
+       
+      <!-- Aquí se mostrará el texto, dinámicamente actualizado -->
+      <span id="journeyText">
+        <strong>
+          Origen: {{ viaje.origen }} &nbsp;&nbsp; 
+          Destino: {{ viaje.destino }} <br>
+          Fecha: {{ viaje.fecha }} &nbsp;&nbsp; 
+          Hora: {{ viaje.hora }}
+        </strong>
+      </span>
+      
+      {% if viaje.origen == "La Paz" and viaje.parada_intermedia == "El Alto" %}
+        <!-- Toggle al lado de la información del viaje -->
+        <span style="margin-left: 20px; vertical-align: middle;">
+          <label class="switch">
+            <input type="checkbox" id="elAltoToggle">
+            <span class="slider"></span>
+          </label>
+          <span style="font-weight:bold; margin-left:8px; vertical-align:middle;">Usar origen El Alto</span>
+        </span>
+      {% endif %}
+    </p>
+    
+    {# Recorremos los pisos dinámicamente #}
+    {% for floor_num, seatGroups in sorted_floors %}
+      <div class="bus-layout">
+        <div class="bus-floor">
+          <h3>Asientos Piso: {{ floor_num }}</h3>
+          
+          <!-- Sección de asientos normales -->
+          <div class="seats">
+            <div class="contenedor-tabla">
+              <div class="texto-lateral izquierda">
+                <p class="texto-girado">Cola</p>
+              </div>
+              {% set normalSeats = seatGroups.normal %}
+              {% if normalSeats|length > 0 %}
+                {% set max_row = normalSeats|map(attribute='row')|max %}
+                {% set max_col = normalSeats|map(attribute='col')|max %}
+                <table class="seat-map">
+                  {% for r in range(max_row + 1) %}
+                    {% if r == 2 %}
+                      <tr class="espacio">
+                        <td colspan="{{ max_col + 1 }}" style="height:20px; border:none;"></td>
+                      </tr>
+                    {% endif %}
+                    <tr>
+                      {% for c in range(max_col + 1) %}
+                        {% set found = normalSeats
+                          | selectattr("row", "equalto", r)
+                          | selectattr("col", "equalto", c)
+                          | list %}
+                        {% if found|length > 0 %}
+                          {% set seat = found[0] %}
+                          {% if seat.status == "ocupado" %}
+                            <td class="seat occupied">
+                              {{ seat.seatNumber or "OCC" }}
+                            </td>
+                          {% else %}
+                            <td class="seat available"
+                                data-seat-name="{{ seat.seatNumber }}"
+                                onclick="onSeatClick('{{ seat.seatNumber }}')">
+                              {{ seat.seatNumber }}
+                            </td>
+                          {% endif %}
+                        {% else %}
+                          <td class="seat"></td>
+                        {% endif %}
+                      {% endfor %}
+                    </tr>
+                  {% endfor %}
+                </table>
+              {% else %}
+                <p style="text-align:center; font-weight:bold;">No hay asientos normales en este piso.</p>
+              {% endif %}
+              <div class="texto-lateral derecha">
+                <p class="texto-girado">Cabeza</p>
+              </div>
+            </div>
+          </div><!-- Fin .seats -->
+          
+          <!-- Sección de asientos EXTRA -->
+          {% if seatGroups.extra|length > 0 %}
+            <div class="extras-section">
+              <h4>Asientos Extra</h4>
+              <div class="extras-container">
+                {% for extraSeat in seatGroups.extra %}
+                  {% if extraSeat.status == "ocupado" %}
+                    <div class="seat extra occupied">
+                      {{ extraSeat.seatNumber }}
+                    </div>
+                  {% else %}
+                    <div class="seat extra available"
+                         data-seat-name="{{ extraSeat.seatNumber }}"
+                         onclick="onSeatClick('{{ extraSeat.seatNumber }}')">
+                      {{ extraSeat.seatNumber }}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+          
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  
+  <!-- Carrito -->
+  <div class="cart">
+    <center>
+      <h3>
+        <img src="/static/images/compra.png" alt="Carrito" class="icon"> Carrito De Reservas
+      </h3>
+    </center>
+    <div id="cartItems" style="margin-top: 10px;">
+      <!-- Se llenará dinámicamente con JS -->
+    </div>
+    <button class="confirm" onclick="openConfirmModal()">Confirmar Compra</button>
+  </div>
+  
+  <!-- Modal de datos de pasajero -->
+  <div id="seatModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Datos Del Pasajero</h2>
+      </div>
+      <div class="modal-body">
+        <form id="seatForm">
+          <label id="asi">Nº Asiento: <span id="seatName"></span></label><br>
+          <label for="name">Nombre:</label>
+          <input type="text" id="name" name="name" required><br>
+          <label for="id">C.I/Pasaporte:</label>
+          <input type="text" id="id" name="id" required><br>
+          <label for="edad">Edad:</label>
+          <input type="number" id="edad" name="edad" required min="1">
+          <label for="phone">Teléfono:</label>
+          <input type="number" id="phone" name="phone" required min="0"><br>
+          <label for="pais">País:</label>
+          <input type="text" id="pais" name="pais" required><br>
+          <label for="price">Precio:</label>
+          <input type="number" id="price" name="price" required min="1"><br>
+          <div class="botones">
+            <button class="Guardar" type="submit">Guardar</button>
+            <button class="close" type="button" onclick="closeModal()">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de Confirmación de Compra -->
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close" onclick="closeConfirmModal()">&times;</span>
+        <h2>Resumen de Compra</h2>
+      </div>
+      <div class="modal-body">
+        <table class="summary-table" id="summaryTable">
+          <thead>
+            <tr>
+              <th>Asiento</th>
+              <th>Nombre</th>
+              <th>Precio (Bs)</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Se llenará dinámicamente mediante JS -->
+          </tbody>
+        </table>
+        <div class="total-price-container">
+          <p><strong>Total:</strong> <span id="totalPrice">0</span> Bs</p>
+        </div>
+        <div id="paymentMethod">
+          <h3>Seleccione medio de pago</h3>
+          <div class="payment-options">
+            <label class="payment-label">
+              <input type="radio" name="payment" value="Efectivo" required> Efectivo
+            </label>
+            <label class="payment-label">
+              <input type="radio" name="payment" value="QR" required> QR
+            </label>
+          </div>
+        </div>
+        <!-- Campo para Carril -->
+        <div style="margin-top:15px;">
+          <label for="carrilInput"><strong>Carril:</strong></label>
+          <input type="text" id="carrilInput" required placeholder="Ej. Carril 2">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button onclick="confirmPurchase()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de Carga (Animación de Procesamiento) -->
+  <div id="loadingModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Procesando Compra...</h2>
+      </div>
+      <div class="modal-body">
+        <p>Por favor, espere un momento...</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de Imprimir Boleto -->
+  <div id="printModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close" onclick="closePrintModal()">&times;</span>
+        <h2>Imprimir Boleto</h2>
+      </div>
+      <div class="modal-body">
+        <p>Este modal mostrará el boleto para imprimir (funcionalidad pendiente).</p>
+      </div>
+      <div class="modal-footer">
+        <button onclick="closePrintModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de Mensaje Interactivo -->
+  <div id="messageModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close" onclick="closeMessageModal()">&times;</span>
+        <h2 id="messageTitle">Mensaje</h2>
+      </div>
+      <div class="modal-body" id="messageBody">
+        <!-- Se llenará dinámicamente -->
+      </div>
+      <div class="modal-footer">
+        <button onclick="closeMessageModal()">Aceptar</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="confirmationMessage" class="confirmation-message">
+    <p id="confirmationText"></p>
+  </div>
+  
+  <footer>
+    <div class="footer">
+      <p>©Copy; 2025 AREQUIPA TOURS. Todos los derechos reservados</p>
+    </div>
+  </footer>
+  
+  <!-- Importar el archivo JS externo (actualizado) -->
+  <script src="/static/js/venta_boletos.js"></script>
+</body>
+</html>

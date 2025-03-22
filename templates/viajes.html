@@ -1,0 +1,240 @@
+{% extends "base_admin.html" %}
+
+{% block title %}
+  Viajes
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/viajes.css">
+<div class="container-fluid container-viajes">
+
+  <!-- FILA 1: Botón (izquierda) + Campos de búsqueda (derecha) -->
+  <div class="row align-items-center mb-3">
+    <!-- Botón Añadir a la izquierda -->
+    <div class="col-md-2 col-12">
+      <button class="btn-add-viaje" onclick="location.href='{{ url_for('admin.new_viaje') }}'">
+        <img src="/static/images/destinos2.png" alt="icono añadir viaje" class="icon-add-viaje me-1">
+        Añadir Nuevo Viaje
+      </button>
+    </div>
+  </div>
+
+  <!-- FILA 2: Título VIAJES (centrado) con ícono -->
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      <h2 class="main-title">
+        VIAJES
+        <img src="/static/images/destinos2.png" alt="icono viajes" class="icon-title-viajes">
+      </h2>
+    </div>
+  </div>
+
+    <!-- Buscador a la derecha -->
+    <div class="col-md-10 col-12 d-flex align-items-center justify-content-end gap-2">
+      <span class="label-buscar1 me-2">Buscar</span>
+      <!-- Origen -->
+      <div class="d-flex align-items-center">
+        <label for="origenInput" class="label-buscar me-2">Origen:</label>
+        <select id="origenInput" class="form-control input-search" style="width: 155px;">
+          <option value="">Seleccione Origen</option>
+          <option value="Potosí" {% if origen == 'Potosí' %}selected{% endif %}>Potosí</option>
+          <option value="Uyuni" {% if origen == 'Uyuni' %}selected{% endif %}>Uyuni</option>
+          <option value="La Paz" {% if origen == 'La Paz' %}selected{% endif %}>La Paz</option>
+          <option value="El Alto" {% if origen == 'El Alto' %}selected{% endif %}>El Alto</option>
+          <option value="Cochabamba" {% if origen == 'Cochabamba' %}selected{% endif %}>Cochabamba</option>
+          <option value="Tupiza" {% if origen == 'Tupiza' %}selected{% endif %}>Tupiza</option>
+          <option value="Villazón" {% if origen == 'Villazón' %}selected{% endif %}>Villazón</option>
+        </select>
+      </div>
+      <!-- Destino -->
+      <div class="d-flex align-items-center">
+        <label for="destinoInput" class="label-buscar me-2">Destino:</label>
+        <select id="destinoInput" class="form-control input-search" style="width: 160px;">
+          <option value="">Seleccione Destino</option>
+          <option value="Potosí" {% if destino == 'Potosí' %}selected{% endif %}>Potosí</option>
+          <option value="Uyuni" {% if destino == 'Uyuni' %}selected{% endif %}>Uyuni</option>
+          <option value="La Paz" {% if destino == 'La Paz' %}selected{% endif %}>La Paz</option>
+          <option value="El Alto" {% if destino == 'El Alto' %}selected{% endif %}>El Alto</option>
+          <option value="Cochabamba" {% if destino == 'Cochabamba' %}selected{% endif %}>Cochabamba</option>
+          <option value="Tupiza" {% if destino == 'Tupiza' %}selected{% endif %}>Tupiza</option>
+          <option value="Villazón" {% if destino == 'Villazón' %}selected{% endif %}>Villazón</option>
+        </select>
+      </div>
+      <!-- Fecha Desde -->
+      <div class="d-flex align-items-center">
+        <label for="fechaDesde" class="label-buscar me-2">Fecha:</label>
+        <label for="fechaDesde" class="label-buscar me-2">Desde</label>
+        <input type="date" id="fechaDesde" class="form-control input-search"
+               value="{{ fechaDesde|default('') }}">
+      </div>
+      <!-- Fecha Hasta -->
+      <div class="d-flex align-items-center">
+        <label for="fechaHasta" class="label-buscar me-2">Hasta</label>
+        <input type="date" id="fechaHasta" class="form-control input-search"
+               value="{{ fechaHasta|default('') }}">
+      </div>
+      <!-- Botón lupa (buscar) -->
+      <button class="button-search" type="button" id="searchButton">
+        <img src="/static/images/buscar.png" alt="buscar" class="icon-search">
+      </button>
+      <!-- Botón "X" rojo para limpiar la búsqueda -->
+      <button class="button-clear" type="button" id="clearSearchButton">
+        ❌
+      </button>
+    </div>
+  <!-- TABLA DE VIAJES -->
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle table-viajes">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Origen</th>
+          <th>Destino</th>
+          <th>Hora</th>
+          <th>Fecha</th>
+          <th>Bus</th>
+          <th>Tipo de Servicio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="viajesTableBody">
+        {% for travel in travels %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ travel.origen }}</td>
+          <td>{{ travel.destino }}</td>
+          <td>{{ travel.hora }}</td>
+          <td>{{ travel.fecha|format_date }}</td>
+          <td>{{ travel.bus.placa }}</td>
+          <td>{{ travel.tipoServicioViaje|join(', ') }}</td>
+          <td>
+            <button class="btn-edit" onclick="location.href='{{ url_for('admin.editar_viaje', viaje_id=travel._id) }}'">Editar</button>
+
+
+            <form action="{{ url_for('admin.delete_viaje', id=travel._id) }}" method="POST" class="deleteForm" style="display:inline;">
+              <button type="button" class="btn-delete" onclick="confirmDeleteViaje(this.form)">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr class="no-data-row">
+          <td colspan="8" class="text-center">No hay viajes registrados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal de Confirmación para Eliminar Viaje -->
+  <div id="deleteViajeModal" class="modal" tabindex="-1"
+       style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog" style="margin: 15% auto; max-width: 400px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmación</h5>
+          <button type="button" class="btn-close" onclick="closeDeleteViajeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de eliminar este viaje?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeDeleteViajeModal()">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteViajeBtn">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje flotante de confirmación -->
+  <div id="deleteConfirmationMessage" class="floating-message" style="display:none;">
+    Viaje eliminado exitosamente.
+  </div>
+
+  <!-- Overlay de carga -->
+  <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="spinner-border text-light" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="loading-text">Procesando...</p>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Botón "Buscar"
+  document.getElementById('searchButton').addEventListener('click', () => {
+    showLoadingOverlay();
+    const origenVal = document.getElementById('origenInput').value;
+    const destinoVal = document.getElementById('destinoInput').value;
+    const fechaDesdeVal = document.getElementById('fechaDesde').value;
+    const fechaHastaVal = document.getElementById('fechaHasta').value;
+
+    let query = [];
+    if (origenVal) query.push(`origen=${encodeURIComponent(origenVal)}`);
+    if (destinoVal) query.push(`destino=${encodeURIComponent(destinoVal)}`);
+    if (fechaDesdeVal) query.push(`fechaDesde=${encodeURIComponent(fechaDesdeVal)}`);
+    if (fechaHastaVal) query.push(`fechaHasta=${encodeURIComponent(fechaHastaVal)}`);
+
+    const baseUrl = "{{ url_for('admin.list_travels') }}";
+    let newUrl = baseUrl;
+    if (query.length > 0) {
+      newUrl += '?' + query.join('&');
+    }
+    window.location.href = newUrl;
+  });
+
+  // Botón "X" para limpiar la búsqueda
+  document.getElementById('clearSearchButton').addEventListener('click', () => {
+    showLoadingOverlay();
+    const baseUrl = "{{ url_for('admin.list_travels') }}";
+    window.location.href = baseUrl;
+  });
+
+  // No hay paginación, "Cargar más" logic se ha removido
+
+  // Modal de confirmación para eliminar viaje
+  let formToDeleteViaje = null;
+  function confirmDeleteViaje(form) {
+    formToDeleteViaje = form;
+    document.getElementById('deleteViajeModal').style.display = 'block';
+  }
+  function closeDeleteViajeModal() {
+    document.getElementById('deleteViajeModal').style.display = 'none';
+  }
+  document.getElementById('confirmDeleteViajeBtn').addEventListener('click', function() {
+    showLoadingOverlay();
+    localStorage.setItem('viajeDeleteSuccess', 'Viaje eliminado correctamente');
+    document.getElementById('deleteViajeModal').style.display = 'none';
+    formToDeleteViaje.submit();
+  });
+
+  // Mensaje flotante de éxito al cargar
+  window.addEventListener('load', function() {
+    const successMessage = localStorage.getItem('viajeDeleteSuccess');
+    if (successMessage) {
+      const alertDiv = document.getElementById('deleteConfirmationMessage');
+      alertDiv.innerText = successMessage;
+      alertDiv.style.display = 'block';
+      localStorage.removeItem('viajeDeleteSuccess');
+      setTimeout(function() {
+        alertDiv.style.opacity = '0';
+        setTimeout(() => alertDiv.style.display = 'none', 500);
+      }, 3500);
+    }
+  });
+
+  function showLoadingOverlay() {
+    document.getElementById("loadingOverlay").style.display = "flex";
+  }
+  function hideLoadingOverlay() {
+    document.getElementById("loadingOverlay").style.display = "none";
+  }
+  document.querySelectorAll('.deleteForm').forEach(form => {
+    form.addEventListener('submit', function() {
+      hideLoadingOverlay();
+    });
+  });
+</script>
+{% endblock %}

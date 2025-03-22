@@ -1,0 +1,166 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Editar Chofer/Relevo{% endblock %}
+
+{% block dashboard_header %}
+<div class="text-center mb-3">
+    <h2 class="main-title">Editar Chofer/Relevo</h2>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <form method="POST" action="{{ url_for('admin.edit_driver', driver_id=driver._id) }}" id="editDriverForm">
+    <div class="row mb-3">
+      <div class="col-md-6">
+         <label for="nombre" class="form-label">Nombre:</label>
+         <input type="text" id="nombre" name="nombre" value="{{ driver.nombre }}" class="form-control" required pattern="[A-Za-z\s]+" title="Solo letras">
+      </div>
+      <div class="col-md-6">
+         <label for="telefono" class="form-label">Teléfono:</label>
+         <input type="text" id="telefono" name="telefono" value="{{ driver.telefono }}" class="form-control" required pattern="\d+" title="Solo números">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-6">
+         <label for="CI" class="form-label">Carnet (CI):</label>
+         <input type="text" id="CI" name="CI" value="{{ driver.CI }}" class="form-control readonly-field" readonly>
+      </div>
+      <div class="col-md-6">
+         <div class="form-check">
+           <input class="form-check-input" type="checkbox" id="ciComplementCheck" {% if driver.ci_complement %}checked{% endif %}>
+           <label class="form-check-label" for="ciComplementCheck">
+             ¿Tiene complemento?
+           </label>
+         </div>
+         <div class="d-flex align-items-center">
+           <input type="text" id="ciComplement" name="ciComplement" value="{{ driver.ci_complement }}" class="form-control me-2" placeholder="Complemento" {% if not driver.ci_complement %}disabled{% endif %} pattern="[0-9]+-[A-Za-z]" title="Formato: número-letra">
+           <div class="d-flex flex-column">
+             <label for="ciDepartment" class="form-label" style="margin-bottom: 0;">Extensión:</label>
+             <select id="ciDepartment" name="ciDepartment" class="form-select" required>
+               <option value="" {% if not driver.ci_department %}selected{% endif %}>Seleccionar</option>
+               <option value="CH" {% if driver.ci_department == "CH" %}selected{% endif %}>CH</option>
+               <option value="LP" {% if driver.ci_department == "LP" %}selected{% endif %}>LP</option>
+               <option value="CB" {% if driver.ci_department == "CB" %}selected{% endif %}>CB</option>
+               <option value="OR" {% if driver.ci_department == "OR" %}selected{% endif %}>OR</option>
+               <option value="PT" {% if driver.ci_department == "PT" %}selected{% endif %}>PT</option>
+               <option value="SC" {% if driver.ci_department == "SC" %}selected{% endif %}>SC</option>
+               <option value="TJ" {% if driver.ci_department == "TJ" %}selected{% endif %}>TJ</option>
+               <option value="PA" {% if driver.ci_department == "PA" %}selected{% endif %}>PA</option>
+               <option value="BN" {% if driver.ci_department == "BN" %}selected{% endif %}>BN</option>
+             </select>
+           </div>
+         </div>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-6">
+         <label for="numero_licencia" class="form-label">Licencia:</label>
+         <input type="text" id="numero_licencia" name="numero_licencia" value="{{ driver.numero_licencia }}" class="form-control readonly-field" readonly>
+      </div>
+      <div class="col-md-6">
+         <label for="rol" class="form-label">Rol:</label>
+         <input type="text" id="rol" name="rol" class="form-control" value="Chofer - Relevo" readonly>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-6">
+         <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento:</label>
+         <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" value="{{ driver.fecha_nacimiento }}" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+         <label for="categoria_licencia" class="form-label">Categoría de Licencia:</label>
+         <input type="text" id="categoria_licencia" name="categoria_licencia" class="form-control" value="C" readonly>
+      </div>
+    </div>
+    <div class="row mb-4"> <!-- Ajustado mb-4 para más espacio -->
+      <div class="col-md-6">
+         <label for="fecha_emision_licencia" class="form-label">Fecha de Emisión de Licencia:</label>
+         <input type="date" id="fecha_emision_licencia" name="fecha_emision_licencia" value="{{ driver.fecha_emision_licencia }}" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+         <label for="fecha_expiracion_licencia" class="form-label">Fecha de Expiración de Licencia:</label>
+         <input type="date" id="fecha_expiracion_licencia" name="fecha_expiracion_licencia" value="{{ driver.fecha_expiracion_licencia }}" class="form-control" required>
+      </div>
+    </div>
+    <div class="row mb-4"> <!-- Ajustado mb-4 para más espacio -->
+      <div class="col-md-6 d-flex justify-content-start">
+        <button type="button" class="btn btn-register-driver" onclick="confirmSaveChanges()">Guardar Cambios</button>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end align-items-center"> <!-- Cambiado justify-content-center a justify-content-end -->
+        <a href="{{ url_for('admin.list_drivers') }}" class="btn btn-secondary" style="width: auto;">Volver</a> <!-- Ajustado width a auto -->
+      </div>
+    </div>
+  </form>
+
+  <!-- Modal de Confirmación para Guardar Cambios -->
+  <div id="saveChangesModal" class="modal" tabindex="-1" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog" style="margin: 15% auto; max-width: 400px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmación</h5>
+          <button type="button" class="btn-close" onclick="closeSaveChangesModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de guardar los cambios?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeSaveChangesModal()">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="confirmSaveChangesBtn">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay de carga -->
+  <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="spinner-border text-light" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="loading-text">Guardando cambios...</p>
+  </div>
+  
+  <br>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/driver_validations.js"></script>
+<script>
+  // Convertir automáticamente el nombre a mayúsculas
+  document.getElementById('nombre').addEventListener('input', function() {
+    this.value = this.value.toUpperCase();
+  });
+
+  // Habilitar/deshabilitar campo de complemento de CI
+  document.getElementById('ciComplementCheck').addEventListener('change', function() {
+    const ciComplement = document.getElementById('ciComplement');
+    ciComplement.disabled = !this.checked;
+  });
+
+  // Mostrar modal de confirmación para guardar cambios
+  function confirmSaveChanges() {
+    document.getElementById('saveChangesModal').style.display = 'block';
+  }
+
+  function closeSaveChangesModal() {
+    document.getElementById('saveChangesModal').style.display = 'none';
+  }
+
+  document.getElementById('confirmSaveChangesBtn').addEventListener('click', function() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    document.getElementById('editDriverForm').submit();
+  });
+
+  // Al enviar el formulario, muestra el overlay de carga
+  document.getElementById('editDriverForm').addEventListener('submit', function() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+  });
+
+  // Si se detecta un mensaje de éxito (en caso de algún error, el backend redirige y no muestra mensaje aquí)
+  if (document.querySelector('.alert-success')) {
+    localStorage.setItem('driverSuccess', document.querySelector('.alert-success').innerText);
+    window.location.href = "{{ url_for('admin.list_drivers') }}";
+  }
+</script>
+{% endblock %}

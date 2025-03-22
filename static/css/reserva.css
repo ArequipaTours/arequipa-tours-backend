@@ -1,0 +1,393 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Barra de navegación */
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: black;
+    color: white;
+    height: auto;
+}
+
+/* Sección izquierda (Ventas) */
+.left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding-left: 165px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    text-align: center; /* Center-align text below the icon */
+}
+
+.left .icon {
+    width: 44px;
+    height: 44px;
+}
+.left a{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+}
+.left .icon:hover{
+    background-color: #C6CFCE;
+    border-radius: 2px;
+    transition: 3ms;
+
+}
+.left a:hover{
+    color: #F77014;
+}
+
+/* Sección central (Logo) */
+.center {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+.logo {
+    height: 50px;
+    padding-right: 90px;
+}
+
+/* Sección derecha (Cerrar sesión) */
+.right {
+    display: flex;
+    padding-right: -80px;
+}
+
+.logout {
+    background-color: #F77014;
+    border: none;
+    padding: 15px 15px;
+    cursor: pointer;
+}
+.logout:hover {
+    background-color: #f71414;
+}
+.logout img {
+    padding: 5px;
+    width: 50px;
+    height: 50px;
+}
+
+/* */
+.container { 
+    text-align: center;
+    margin-top: 20px;
+    margin-left: -700px; 
+}
+.container h2 { 
+    margin-bottom: 20px; 
+    font-size: 24px;
+}
+.bus-layout {
+    display: flex; 
+    justify-content: center; 
+    gap: 90px; 
+    margin-top: 20px;
+    margin-left: 150px;
+}
+.bus-layout p { 
+    font-size: 20px; 
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+}
+.bus-floor {
+    background: white; 
+    padding: 20px; 
+    border-radius: 15px;
+    border: 2px solid black;
+}
+.seat-map {
+    border-collapse: separate; /* Permite el espaciado entre celdas */
+    border-spacing: 10px; /* Espacio entre filas y columnas */
+    margin: 20px auto;
+}
+
+.seat-map td {
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    font-weight: bold;
+    border: 2px solid #ccc;
+    cursor: pointer;
+}
+
+.seat {
+    border-radius: 5px;
+}
+
+.seat.occupied {
+    background: #333436;
+    color: white;
+    cursor: not-allowed;
+}
+
+.seat.available {
+    background: #0CC322;
+    color: white;
+}
+
+.seat-map td:hover {
+    transform: scale(1.1);
+}
+.pre_info {
+    margin-top: 140px;
+    margin-left: -65px;
+    font-size: 20px;
+    font-weight: bold;
+}
+.pre_info img{
+    width: 20px;
+    height: 25px;
+}
+.contenedor-tabla {
+    display: flex; /* Contenedor para la tabla y los textos laterales */
+    align-items: center; /* Centrar verticalmente los elementos dentro del contenedor */
+}
+.izquierda {
+    margin-right: 1px; /* Reducir espacio a la derecha del texto "Cola" */
+}
+.derecha {
+    margin-left: 1px; /* Reducir espacio a la izquierda del texto "Cabeza" */
+}
+.texto-girado {
+    transform: rotate(-90deg); /* Girar -90 grados (vertical) */
+    white-space: nowrap; /* Evitar que el texto se corte */
+}
+
+.cart {
+    position: absolute; 
+    right: 60px;
+    top: 170px;
+    border-radius: 8px;
+    border: 2px solid black;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 90px 40px 20px;
+    text-align: center; /* Centrar contenido dentro del carrito */
+}
+.cart h3 { 
+    margin-top: -90px;
+    margin-bottom: 10px; 
+    font-size: 24px;
+    display: inline-block;
+    vertical-align: middle;
+    padding-top: -500px;
+}
+.cart img{
+    width: 67px;
+    height: 67px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 10px;
+}
+.cart button { 
+    padding: 5px 10px; 
+    border: none; 
+    cursor: pointer; 
+}
+.delete { 
+    background: #F77014;
+    border-radius: 5px; 
+    color: white; 
+    margin-left: 15px;
+}
+.delete:hover { 
+    background: #f71414; 
+}
+.confirm { 
+    background: blue; 
+    color: white; 
+    margin-top: 20px;
+    border-radius: 5px; 
+    display: block; /* Hacer que el botón ocupe toda la línea */
+    margin-left: auto; /* Centrar horizontalmente */
+    margin-right: auto; /* Centrar horizontalmente */
+}
+.confirm:hover { 
+    background: #0CC322; 
+}
+
+/* Estilos para el modal */
+.modal {
+    display: none; /* Ocultar el modal por defecto */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+#name {
+    width: 65%;
+    height: 25px;
+    padding: 3px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.622);
+    margin-left: 5px;
+    margin-top: 15px;
+}
+#id{
+    width: 30%;
+    height: 25px;
+    padding: 3px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.622);
+    margin-left: 5px;
+    margin-top: 10px;
+}
+#edad{
+    width: 15%;
+    height: 25px;
+    padding: 3px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.622);
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 10px;
+}
+#phone{
+    width: 35%;
+    height: 25px;
+    padding: 3px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.622);
+    margin-left: 5px;
+    margin-top: 10px;
+}
+#pais{
+    width: 35%;
+    height: 25px;
+    padding: 3px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.622);
+    margin-left: 5px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+#seatForm{
+    align-items: center;
+    margin: 1%;
+    background-color: #C6CFCE;
+    padding: 15px 80px;
+    border-radius: 8px;
+}
+#Qr{
+    width: 35px;
+    padding-right: 5px;
+}
+#efectivo{
+    width: 35px;
+}
+
+.botones{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding-top: 25px;
+}
+.Guardar {
+    background-color: #F77014;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 20px;
+}
+.close {
+    background-color: #ff0000;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 20px;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Modal de Carga (Pensamiento) */
+.thinking-modal {
+    display: none; /* Inicialmente oculto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    text-align: center;
+}
+
+.thinking-content p {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+
+
+.footer {
+    background-color: black;
+    color: white;
+    text-align: center;
+    margin-top: 40px;
+    padding: 10px;
+    bottom: 0;
+    width: 100%;
+}
+/* Responsivo */
+@media (max-width: 768px) {
+    .logo {
+        height: 40px;
+    }
+    .logout {
+        padding: 8px;
+    }
+}

@@ -1,0 +1,97 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Editar Viaje{% endblock %}
+
+{% block dashboard_header %}
+  <h2 class="main-title">Editar Viaje</h2>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/nuevo_viaje.css">
+
+<div class="container-nuevo-viaje">
+  <form id="formEditarViaje" method="post" action="{{ url_for('admin.editar_viaje', viaje_id=viaje._id) }}">
+    
+    <!-- DATOS DEL VIAJE (origen y destino readonly) -->
+    <fieldset class="fieldset">
+      <legend class="legend">Datos del Viaje</legend>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="origen">Origen:</label>
+          <input type="text" id="origen" name="origen" class="form-control" value="{{ viaje.origen }}" readonly>
+        </div>
+        <div class="form-group">
+          <label for="destino">Destino:</label>
+          <input type="text" id="destino" name="destino" class="form-control" value="{{ viaje.destino }}" readonly>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fecha">Fecha:</label>
+          <input type="date" id="fecha" name="fecha" class="form-control" value="{{ viaje.fecha }}">
+        </div>
+        <div class="form-group">
+          <label for="hora">Hora:</label>
+          <input type="time" id="hora" name="hora" class="form-control" value="{{ viaje.hora }}">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tipo de Servicio:</label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="leito" name="tipoServicioViaje" value="Leito"
+              {% if "Leito" in viaje.tipoServicioViaje %}checked{% endif %}>
+            <label class="form-check-label" for="leito">Leito</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="semiCama" name="tipoServicioViaje" value="Semi Cama"
+              {% if "Semi Cama" in viaje.tipoServicioViaje %}checked{% endif %}>
+            <label class="form-check-label" for="semiCama">Semi Cama</label>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    
+    <!-- DATOS DEL BUS Y CONDUCTORES (editables) -->
+    <fieldset class="fieldset">
+      <legend class="legend">Datos del Bus y Conductores</legend>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="placa">Placa:</label>
+          <input type="text" id="placa" name="placa" class="form-control" value="{{ viaje.bus.placa }}">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="chofer">Chofer:</label>
+          <select id="chofer" name="chofer" class="form-control">
+            <option value="">Seleccione Chofer</option>
+            {% for d in drivers %}
+              <option value="{{ d._id }}" {% if viaje.chofer_id and viaje.chofer_id|string == d._id|string %}selected{% endif %}>
+                {{ d.nombre }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="relevo">Relevo:</label>
+          <select id="relevo" name="relevo" class="form-control">
+            <option value="">Seleccione Relevo</option>
+            {% for d in drivers %}
+              <option value="{{ d._id }}" {% if viaje.relevo_id and viaje.relevo_id|string == d._id|string %}selected{% endif %}>
+                {{ d.nombre }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </fieldset>
+    
+    <!-- BOTONES DE ACCIÓN -->
+    <div class="form-actions text-center">
+      <button type="submit" class="btn-guardar">Guardar Cambios</button>
+      <button type="button" class="btn-cancelar" onclick="window.location.href='{{ url_for('admin.list_travels') }}'">Cancelar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

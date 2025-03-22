@@ -1,0 +1,122 @@
+{% extends "base_ventanilla.html" %}
+
+{% block title %}Panel de Ventanilla{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/ventanilla.css">
+
+<div class="ventanilla-main">
+  <!-- Sección central con hora y fecha dinámicas -->
+  <div class="ventanilla-info">
+    <h2 class="ventanilla-time">{{ current_time }}</h2>
+    <p class="ventanilla-date">{{ current_date }}</p>
+    <h3 class="ventanilla-subtitle">Reserva y Registro</h3>
+  </div>
+
+  <!-- Formulario de búsqueda (Origen, Destino, Fecha, Hora) -->
+  <div class="ventanilla-search">
+    <form method="GET" action="{{ url_for('ventanilla.cajero_dashboard') }}" class="search-form">
+      <label for="origen">Origen:</label>
+      <select name="origen" id="origen">
+        <option value="La Paz" {% if user.origen == "La Paz" %}selected{% endif %}>La Paz</option>
+        <option value="El Alto" {% if user.origen == "El Alto" %}selected{% endif %}>El Alto</option>
+        <option value="Potosí" {% if user.origen == "Potosí" %}selected{% endif %}>Potosí</option>
+        <option value="Uyuni" {% if user.origen == "Uyuni" %}selected{% endif %}>Uyuni</option>
+        <option value="Cochabamba" {% if user.origen == "Cochabamba" %}selected{% endif %}>Cochabamba</option>
+        <option value="Tupiza" {% if user.origen == "Tupiza" %}selected{% endif %}>Tupiza</option>
+        <option value="Villazón" {% if user.origen == "Villazón" %}selected{% endif %}>Villazón</option>
+      </select>
+
+      <label for="destino">Destino:</label>
+      <select name="destino" id="destino">
+        <option value="">-- Selecciona destino --</option>
+        <option value="La Paz">La Paz</option>
+        <option value="Potosí">Potosí</option>
+        <option value="Uyuni">Uyuni</option>
+        <option value="Cochabamba">Cochabamba</option>
+        <option value="Tupiza">Tupiza</option>
+        <option value="Villazón">Villazón</option>
+      </select>
+
+      <label for="fecha">Fecha:</label>
+      <input type="date" name="fecha" id="fecha" value="{{ today_str }}">
+
+      <label for="hora">Hora:</label>
+      <input type="time" name="hora" id="hora">
+
+      <button type="submit" class="btn-search">Buscar</button>
+    </form>
+  </div>
+
+  <!-- Tabla de viajes -->
+  <div class="ventanilla-table-container">
+    <table class="viajes-table">
+      <thead>
+        <tr>
+          <th>Origen</th>
+          <th>Destino</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Bus</th>
+          <th>Tipo de Servicio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if travels %}
+          {% for v in travels %}
+          <tr>
+            <td>{{ v.origen }}</td>
+            <td>{{ v.destino }}</td>
+            <td>
+              {%- set date_parts = v.fecha.split('-') -%}
+              {{ date_parts[2] ~ '-' ~ date_parts[1] ~ '-' ~ date_parts[0] }}
+            </td>
+            <td>{{ v.hora }}</td>
+            <td>{{ v.bus.placa if v.bus else '' }}</td>
+            <td>{{ v.tipoServicioViaje | join(', ') }}</td>
+            <td>
+              <!-- Botón para iniciar venta de boletos -->
+              <a href="{{ url_for('ventanilla.vender_boletos', viaje_id=v._id) }}" class="btn btn-primary">
+                Vender Boletos
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="7">No hay viajes con el origen seleccionado.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Script para actualizar la hora y la fecha en tiempo real -->
+<script>
+  function updateClock() {
+    var boliviaTime = new Date(new Date().toLocaleString("en-US", { timeZone: "America/La_Paz" }));
+    var hours = boliviaTime.getHours();
+    var minutes = boliviaTime.getMinutes();
+    var seconds = boliviaTime.getSeconds();
+    hours = hours < 10 ? "0" + hours : hours;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    var timeString = hours + ":" + minutes;
+    
+    var day = boliviaTime.getDate();
+    var month = boliviaTime.getMonth();
+    var year = boliviaTime.getFullYear();
+    var monthNames = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
+                      "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    var dateString = day + " de " + monthNames[month] + " " + year;
+    
+    document.querySelector('.ventanilla-time').textContent = timeString;
+    document.querySelector('.ventanilla-date').textContent = dateString;
+  }
+  
+  setInterval(updateClock, 1000);
+  updateClock();
+</script>
+{% endblock %}

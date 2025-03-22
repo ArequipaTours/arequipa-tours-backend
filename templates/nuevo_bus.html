@@ -1,0 +1,112 @@
+{% extends "base_admin.html" %}
+
+{% block title %}
+  Formulario de Registrar Bus
+{% endblock %}
+
+{% block dashboard_header %}
+<div class="text-center mb-4">
+  <h2 class="main-title">
+    Formulario de Registrar Bus 
+    <img src="/static/images/autobus.png" alt="icono bus" style="width:30px; height:30px;">
+  </h2>
+</div>
+{% endblock %}
+
+{% block content %}
+{% if error %}
+<div class="floating-message error show" role="alert">
+  {{ error }}
+</div>
+{% endif %}
+{% if success %}
+<div class="floating-message success show" role="alert">
+  {{ success }}
+</div>
+{% endif %}
+
+<form action="{{ url_for('admin.new_bus') }}" method="POST" id="busForm" style="padding-bottom: 100px;">
+
+  <!-- Datos básicos del Bus -->
+  <div class="row g-3 mb-4 justify-content-center">
+    <div class="col-md-2">
+      <label for="placa" class="form-label">Placa:</label>
+      <input type="text" id="placa" name="placa" class="form-control" placeholder="XXX-123" required>
+    </div>
+    <!-- Se elimina el campo "Tipo de Servicio" -->
+
+    <div class="col-md-3">
+      <label for="modelo" class="form-label">Modelo:</label>
+      <input type="text" id="modelo" name="modelo" class="form-control" placeholder="Ej: MZ-2023" required>
+    </div>
+    <div class="col-md-3">
+      <label for="propietario" class="form-label">Propietario:</label>
+      <input type="text" id="propietario" name="propietario" class="form-control" placeholder="Ingrese propietario" required>
+    </div>
+    <div class="col-md-3">
+      <label for="estado" class="form-label">Estado:</label>
+      <select id="estado" name="estado" class="form-select" required>
+        <option value="">Seleccione...</option>
+        <option value="disponible">Disponible</option>
+        <option value="en mantenimiento">En mantenimiento</option>
+        <option value="no operativo">No operativo</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="pisos" class="form-label">Total de Pisos:</label>
+      <select id="pisos" name="pisos" class="form-select" required>
+        <option value="1" selected>1 Piso</option>
+        <option value="2">2 Pisos</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Sección para modelar asientos -->
+  <div class="text-center mb-3">
+    <h5>Modelado de Asientos y Estructura del Bus</h5>
+    <!-- Contenedor para los inputs de configuración por piso -->
+    <div id="floorInputs" class="mb-3"></div>
+
+    <!-- Contenedor donde se generará la matriz de asientos -->
+    <div id="seatContainer" class="seat-container d-flex flex-column align-items-center"
+         style="position: relative; width: 100%; min-height: 500px; border: 1px dashed #999; margin: 10px auto;">
+    </div>
+    
+    <!-- Botón para añadir un Asiento Extra Draggable -->
+    <button type="button" class="btn btn-info" id="btnAddExtraSeat" style="margin-top:10px;">
+      Añadir Asiento Extra Draggable
+    </button>
+    
+    <!-- Mostrar total de asientos (type="seat") -->
+    <div class="text-center mt-3">
+      <p>Total de Asientos: <span id="totalAsientos">0</span></p>
+    </div>
+  </div>
+
+  <!-- Campos ocultos para enviar la información calculada -->
+  <input type="hidden" name="totalAsientos" id="hiddenTotalAsientos">
+  <input type="hidden" name="estructura_asientos" id="hiddenEstructuraAsientos">
+
+  <!-- Botones de Guardar / Cancelar -->
+  <div class="text-center mt-1">
+    <button type="button" class="btn btn-success px-4 me-3" id="btnGuardar">Guardar</button>
+    <button type="button" class="btn btn-danger px-4" id="btnCancelar">Cancelar</button>
+  </div>
+</form>
+
+<!-- Div para mensajes flotantes -->
+<div id="floatingMessage" class="floating-message" style="display: none;"></div>
+
+<!-- Overlay de carga -->
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+  <div class="spinner-border text-light" role="status">
+    <span class="visually-hidden">Cargando...</span>
+  </div>
+  <p class="loading-text">Procesando...</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="/static/css/new_bus.css">
+<script src="/static/js/new_bus.js"></script>
+{% endblock %}

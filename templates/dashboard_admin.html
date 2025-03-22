@@ -1,0 +1,223 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Dashboard Administrador{% endblock %}
+
+{% block dashboard_header %}
+
+
+    <!-- Modal de "Buscando..." (Opcional) -->
+    <div id="thinking-modal" class="thinking-modal" style="display:none;">
+        <div class="thinking-modal-content">
+            <div class="thinking-modal-header">
+                <h2>Buscando...</h2>
+            </div>
+            <div class="thinking-modal-body">
+                <p>Estamos buscando la información que solicitaste.</p>
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/dashboard_admin.css">
+
+<div class="container-fluid dashboard-content">
+    <p class="titulo-viajes">VIAJES PARA HOY:</p>
+    
+    <!-- Barra de búsqueda (Origen, Destino, Hora, Fecha) -->
+    <div class="search-container">
+        <label for="origenSelect" class="fw-bold me-2">Origen:</label>
+        <select id="origenSelect" class="form-select">
+            <option value="">(Todos)</option>
+            <option value="Potosí" {% if origen == 'Potosí' %}selected{% endif %}>Potosí</option>
+            <option value="Uyuni" {% if origen == 'Uyuni' %}selected{% endif %}>Uyuni</option>
+            <option value="La Paz" {% if origen == 'La Paz' %}selected{% endif %}>La Paz</option>
+            <option value="El Alto" {% if origen == 'El Alto' %}selected{% endif %}>El Alto</option>
+            <option value="Cochabamba" {% if origen == 'Cochabamba' %}selected{% endif %}>Cochabamba</option>
+            <option value="Tupiza" {% if origen == 'Tupiza' %}selected{% endif %}>Tupiza</option>
+            <option value="Villazón" {% if origen == 'Villazón' %}selected{% endif %}>Villazón</option>
+        </select>
+        
+        <label for="destinoSelect" class="fw-bold me-2">Destino:</label>
+        <select id="destinoSelect" class="form-select">
+            <option value="">(Todos)</option>
+            <option value="Potosí" {% if destino == 'Potosí' %}selected{% endif %}>Potosí</option>
+            <option value="Uyuni" {% if destino == 'Uyuni' %}selected{% endif %}>Uyuni</option>
+            <option value="La Paz" {% if destino == 'La Paz' %}selected{% endif %}>La Paz</option>
+            <option value="El Alto" {% if destino == 'El Alto' %}selected{% endif %}>El Alto</option>
+            <option value="Cochabamba" {% if destino == 'Cochabamba' %}selected{% endif %}>Cochabamba</option>
+            <option value="Tupiza" {% if destino == 'Tupiza' %}selected{% endif %}>Tupiza</option>
+            <option value="Villazón" {% if destino == 'Villazón' %}selected{% endif %}>Villazón</option>
+        </select>
+        
+        <label for="horaInput" class="fw-bold me-2">Hora:</label>
+        <input type="time" id="horaInput" class="form-select"
+               value="{{ hora|default('') }}">
+        
+        <label for="fechaInput" class="fw-bold me-2">Fecha:</label>
+        <input type="date" id="fechaInput" class="form-select"
+               value="{{ fecha|default('') }}">
+        
+        <button class="btn btn-primary ms-2" id="btnSearch" onclick="showThinkingModal()">Buscar</button>
+        <button class="btn btn-danger ms-2" id="btnClear" onclick="showThinkingModal()">❌</button>
+    </div>
+    
+    <div class="main-layout">
+        <div class="table-container">
+            <table class="table table-bordered shadow border border-dark text-center mx-auto">
+                <thead>
+                    <tr>
+                        <th class="fs-8 text-white" style="background-color: #f97316;">Bus</th>
+                        <th class="fs-8 text-white" style="background-color: #000000;">Destino</th>
+                        <th class="fs-8 text-white" style="background-color: #000000;">Origen</th>
+                        <th class="fs-8 text-white" style="background-color: #000000;">Hora</th>
+                        <th class="fs-8 text-white" style="background-color: #000000;">Tipo Serv.</th>
+                        <th class="text-black fs-8" style="background-color: #C6CFCE">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if travels_today %}
+                      {% for travel in travels_today %}
+                        <tr>
+                          <td>{{ travel.bus.placa }}</td>
+                          <td>{{ travel.destino }}</td>
+                          <td>{{ travel.origen }}</td>
+                          <td>{{ travel.hora }}</td>
+                          <td>{{ travel.tipoServicioViaje|join(', ') }}</td>
+                          <td>
+                            <button class="btn btn-success btn-sm" onclick="location.href='{{ url_for('admin.ver_pasajes', viaje_id=travel._id) }}'">VER</button>
+
+                            <button class="btn btn-primary btn-sm"
+                            onclick="location.href='{{ url_for('admin.lista_pasajeros_pdf', viaje_id=travel._id) }}'">
+                      IMPRIMIR
+                    </button>
+                    
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    {% else %}
+                      <tr>
+                        <td colspan="6">No hay viajes para los filtros actuales.</td>
+                      </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Cartas de estadísticas -->
+        <div class="cards-container">
+            <div class="card" style="background-color: #C6CFCE">
+                <h3 class="fw-bold">NÚMERO <br>DE<br>PERSONAL</h3>
+                <div class="number fs-1 fw-bold text-black">
+                  {{ drivers_count }}
+                </div>
+            </div>
+            <div class="card" style="background-color: #f97316;">
+                <h3 class="fw-bold">NÚMERO <br>DE<br>BUSES</h3>
+                <div class="number fs-1 fw-bold text-black">
+                  {{ buses_count }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // BOTÓN BUSCAR
+  document.getElementById('btnSearch').addEventListener('click', () => {
+    const origenVal = document.getElementById('origenSelect').value.trim();
+    const destinoVal = document.getElementById('destinoSelect').value.trim();
+    const horaVal = document.getElementById('horaInput').value;
+    const fechaVal = document.getElementById('fechaInput').value;
+
+    let query = [];
+    if (origenVal) query.push(`origen=${encodeURIComponent(origenVal)}`);
+    if (destinoVal) query.push(`destino=${encodeURIComponent(destinoVal)}`);
+    if (horaVal) query.push(`hora=${encodeURIComponent(horaVal)}`);
+    if (fechaVal) query.push(`fecha=${encodeURIComponent(fechaVal)}`);
+
+    const baseUrl = "{{ url_for('admin.admin_dashboard') }}"; 
+    let newUrl = baseUrl;
+    if (query.length > 0) {
+      newUrl += '?' + query.join('&');
+    }
+    showThinkingModal();
+    window.location.href = newUrl;
+  });
+
+  // BOTÓN CLEAR => /dashboard/admin sin query
+  document.getElementById('btnClear').addEventListener('click', () => {
+    const baseUrl = "{{ url_for('admin.admin_dashboard') }}";
+    showThinkingModal();
+    window.location.href = baseUrl;
+  });
+
+  // Modal "Pensando..."
+  function showThinkingModal() {
+    const thinkingModal = document.getElementById("thinking-modal"); 
+    thinkingModal.style.display = "flex";  
+    setTimeout(() => {
+        thinkingModal.style.display = "none";  
+    }, 3000);
+  }
+
+  // ──────────────────────────────────────────────────
+  // LÓGICA PARA EL MODAL "ACTUALIZAR QR"
+  // ──────────────────────────────────────────────────
+  const btnActualizarQR = document.getElementById('btnActualizarQR');
+  const modalUpdateQR = document.getElementById('modalUpdateQR');
+  const qrModalClose = document.getElementById('qrModalClose');
+  const btnCancelarQR = document.getElementById('btnCancelarQR');
+  const btnGuardarQR = document.getElementById('btnGuardarQR');
+
+  // Abrir modal
+  btnActualizarQR.addEventListener('click', () => {
+    modalUpdateQR.style.display = 'block';
+  });
+
+  // Cerrar modal (X) y Cancelar
+  qrModalClose.addEventListener('click', () => {
+    modalUpdateQR.style.display = 'none';
+    document.getElementById('qrActualContainer').style.display = 'none';
+  });
+  btnCancelarQR.addEventListener('click', () => {
+    modalUpdateQR.style.display = 'none';
+    document.getElementById('qrActualContainer').style.display = 'none';
+  });
+
+  // Deshabilitar botón Guardar si no hay archivo o fecha
+  document.getElementById('qrFile').addEventListener('change', checkQRForm);
+  document.getElementById('qrExpiration').addEventListener('change', checkQRForm);
+
+  function checkQRForm() {
+    const qrFile = document.getElementById('qrFile').files.length > 0;
+    const qrExpiration = document.getElementById('qrExpiration').value;
+    btnGuardarQR.disabled = !(qrFile && qrExpiration);
+  }
+
+  // "Ver QR Actual"
+  document.getElementById('btnVerQRActual').addEventListener('click', () => {
+    fetch("{{ url_for('admin.get_current_qr') }}")  
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById("qrActualContainer").style.display = 'block';
+          document.getElementById("qrActualImage").src = data.qr_url;
+          document.getElementById("qrActualExpiration").textContent =
+            "Expira el: " + data.expiration;
+        } else {
+          alert("No hay un QR actual registrado.");
+        }
+      })
+      .catch(err => {
+        console.error("Error al obtener QR actual:", err);
+      });
+  });
+</script>
+{% endblock %}

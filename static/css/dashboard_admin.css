@@ -1,0 +1,165 @@
+/* Dashboard Content */
+.dashboard-content {
+    padding: 20px;
+}
+.dashboard-header {
+    padding-left: 50px;
+}
+.titulo {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.titulo-panel {
+    text-align: center;
+    font-size: 30px; /* Increase font size */
+}
+
+.titulo-buscar {
+    margin-left: 40px; /* Move "Buscar:" label to the right */
+}
+
+
+
+/* Barra de Búsqueda Nueva */
+.search-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px; 
+    margin-bottom: 20px;
+    margin-left: -10px; /* Move search bar to the right */
+}
+.search-container select,
+.search-container input[type="date"],
+.search-container input[type="time"] {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 130px;
+}
+
+#btnSearch,
+#btnClear {
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+}
+#btnSearch {
+    background-color: #333436; 
+    color: #fff;
+}
+#btnClear {
+    background: none; /* Remove background */
+    color: #DC2400; /* Make "X" red */
+}
+
+/* Layout y Tablas */
+.main-layout {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping */
+    justify-content: space-between;
+    gap: 20px; /* Reduce gap for better fit on smaller screens */
+    margin-top: 40px; /* Move table further down */
+}
+.table-container {
+    flex: 3; /* Increase table width */
+    min-width: 300px; /* Ensure minimum width */
+    max-height: 350px;
+    overflow-y: auto; /* Scroll si la tabla excede el max-height */
+}
+.cards-container {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Reduce gap for better fit on smaller screens */
+    align-items: flex-end; /* Align cards to the right */
+    margin-right: 20px; /* Move cards slightly to the left */
+    margin-top: -10%;
+}
+.card {
+    background-color: #f1f1f1;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(78, 78, 78, 0.648);
+    text-align: center;
+    color: white;
+    width: 80%; /* Make cards take full width */
+}
+.titulo-viajes {
+    font-size: 35px;
+    font-weight: bold;
+    padding-top: 25px;
+    padding-left: 250px;
+    margin-bottom: 15px;
+}
+
+/* Modal de Pensando */
+.thinking-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+.thinking-modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    position: relative;
+    margin: auto;
+}
+
+
+
+/* Media Query - Dashboard (Pantallas pequeñas) */
+@media (max-width: 1024px) {
+    .dashboard-header {
+        padding-left: 0.1px;
+    }
+    .titulo {
+        font-size: 15px;
+        margin: auto;
+    }
+    .main-layout {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .titulo-viajes {
+        font-size: 25px;
+        padding-left: 10px;
+    }
+    .table-container {
+        max-width: 100%;
+        max-height: 350px;
+        overflow-y: auto;
+    }
+    .cards-container {
+        margin-top: 20px;
+        margin-bottom: 75px;
+        text-align: center;
+        width: 100%;
+        gap: 12px;
+        align-items: center; /* Center align cards on smaller screens */
+        margin-right: 0; /* Remove right margin on smaller screens */
+    }
+    .fw-bold {
+        font-size: 15px;
+    }
+
+    /* Ajustes para la barra de búsqueda en pantallas pequeñas */
+    .search-container {
+        gap: 5px;
+        margin-left: 0; /* Remove left margin */
+    }
+    .search-container select,
+    .search-container input[type="date"],
+    .search-container input[type="time"] {
+        width: 100px;
+    }
+}

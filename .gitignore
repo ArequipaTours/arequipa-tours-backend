@@ -1,6 +1,5 @@
+# Archivos y carpetas comunes a ignorar
 .env
 venv/
 __pycache__/
-*.pyc
-.DS_Store
-*.log
+

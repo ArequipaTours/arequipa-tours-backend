@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, current_app, redirect, url_for, flash, jsonify, Response
+from flask import Blueprint, render_template, request, current_app, redirect, url_for, flash, jsonify, Response, send_file
 import jwt
 from functools import wraps
 from werkzeug.security import generate_password_hash
@@ -1169,16 +1169,16 @@ def lista_pasajeros_pdf(viaje_id):
     c.save()
 
     pdf_data = buffer.getvalue()
-    buffer.close()
+    buffer.seek(0)
 
     # Guardar
-    pdf_dir = os.path.join(current_app.root_path, "static", "pdf")
-    if not os.path.exists(pdf_dir):
-        os.makedirs(pdf_dir)
-    pdf_filename = f"lista_pasajeros_{viaje_id}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}.pdf"
-    pdf_path = os.path.join(pdf_dir, pdf_filename)
-    with open(pdf_path, "wb") as f:
-        f.write(pdf_data)
+    filename = f"lista_pasajeros_{viaje_id}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}.pdf"
+    return send_file(
+    buffer,
+    mimetype='application/pdf',
+    as_attachment=True,
+    download_name=filename
+)
 
     # Forzar descarga
     response = Response(pdf_data, mimetype="application/pdf")

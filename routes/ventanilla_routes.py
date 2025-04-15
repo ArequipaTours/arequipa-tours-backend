@@ -171,7 +171,7 @@ def vender_boletos(viaje_id):
     viaje_origen = viaje.get("origen", "").strip().lower()
 
     # Si el viaje es desde La Paz y el usuario está vendiendo para La Paz
-    if viaje_origen == "la paz" and user_origin == "la paz":
+    if viaje_origen == "La Paz" and user_origin == "La Paz":
         if viaje.get("estado") == "generado" and viaje.get("papeleta") is True:
             flash("Viaje ya cerrado. No se pueden vender más boletos desde La Paz.", "danger")
         return redirect(url_for('ventanilla.cajero_dashboard'))
